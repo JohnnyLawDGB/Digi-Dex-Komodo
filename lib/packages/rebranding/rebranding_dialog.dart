@@ -104,7 +104,7 @@ class _RebrandingDialogState extends State<RebrandingDialog> {
                     child: TextButton(
                       onPressed: () async {
                         const url =
-                            'https://komodoplatform.com/en/blog/brand-unification';
+                            'https://github.com/JohnnyLawDGB/Digi-Dex-Komodo';
                         await canLaunchUrlString(url)
                             ? await launchUrlString(url)
                             : throw Exception(

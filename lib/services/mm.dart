@@ -221,7 +221,7 @@ class ApiProvider {
         ).toJson(),
       );
 
-    // https://developers.komodoplatform.com/basic-docs/atomicdex/atomicdex-api.html#electrum
+    // https://github.com/JohnnyLawDGB/Digi-Dex-Komodo/wiki/basic-docs/atomicdex/atomicdex-api.html#electrum
     final electrum = <String, dynamic>{
       'method': 'electrum',
       'userpass': mmSe.userpass,
@@ -299,7 +299,7 @@ class ApiProvider {
     }
   }
 
-  /// https://developers.komodoplatform.com/basic-docs/atomicdex/atomicdex-api.html#coins-needed-for-kick-start
+  /// https://github.com/JohnnyLawDGB/Digi-Dex-Komodo/wiki/basic-docs/atomicdex/atomicdex-api.html#coins-needed-for-kick-start
   Future<dynamic> getCoinToKickStart(
     http.Client client,
     BaseService body,
@@ -382,7 +382,7 @@ class ApiProvider {
   }
 
   /// Returns a parsed JSON of the MM metrics
-  /// https://developers.komodoplatform.com/basic-docs/atomicdex/atomicdex-tutorials/atomicdex-metrics.html
+  /// https://github.com/JohnnyLawDGB/Digi-Dex-Komodo/wiki/basic-docs/atomicdex/atomicdex-tutorials/atomicdex-metrics.html
   Future<dynamic> getMetricsMM2(BaseService body, {http.Client client}) async {
     client ??= mmSe.client;
     final userBody = await _assertUserpass(client, body);

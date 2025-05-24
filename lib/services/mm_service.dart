@@ -30,7 +30,7 @@ import '../utils/utils.dart';
 /// Singleton shorthand for `MMService()`, Market Maker API.
 MMService mmSe = MMService._internal();
 
-/// Interface to Market Maker, https://developers.komodoplatform.com/
+/// Interface to Market Maker, https://github.com/JohnnyLawDGB/Digi-Dex-Komodo/wiki/
 class MMService {
   factory MMService() => mmSe;
   MMService._internal();
@@ -39,7 +39,7 @@ class MMService {
   Process mm2Process;
   List<Coin> coins = <Coin>[];
 
-  /// Represents wether mm2 has been started or not for this session even if
+  /// Represents whether mm2 has been started or not for this session even if
   /// it is not currently running.
   ///
   /// On iOS, the RPC server is killed when the app goes to background. This
@@ -64,8 +64,8 @@ class MMService {
   /// Our name and version
   String gui;
 
-  /// We're using the netid of 8762 as part of the bracking changes in MM2
-  /// warrenting a new netid.
+  /// We're using the netid of 8762 as part of the breaking changes in MM2
+  /// warranting a new netid.
   int netid = 8762;
 
   /// Effective memory used by the application, MiB

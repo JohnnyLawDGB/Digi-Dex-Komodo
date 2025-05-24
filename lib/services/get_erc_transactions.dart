@@ -147,7 +147,7 @@ class GetErcTransactions {
         (coin.testCoin ? '&testnet=true' : '');
   }
 
-  // https://github.com/KomodoPlatform/AtomicDEX-mobile/pull/1078#issuecomment-808705710
+  // https://github.com/JohnnyLawDGB/Digi-Dex-Komodo/pull/1078#issuecomment-808705710
   Transactions _fixTestCoinsNaming(
       Transactions transactions, Coin originalCoin) {
     if (!originalCoin.testCoin) return transactions;

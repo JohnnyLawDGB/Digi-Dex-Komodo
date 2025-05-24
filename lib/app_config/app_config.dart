@@ -45,14 +45,23 @@ class AppConfig {
 
   // Brand config below
 
-  String get appName => 'Komodo Wallet';
-  String get appCompanyLong => 'Komodo Platform';
-  String get appCompanyShort => 'Komodo';
-
+  String get appName => 'DigiByte Wallet';
+  String get appCompanyLong => 'DigiByte';
+  String get appCompanyShort => 'DigiByte';
+    // from master
   final bool kIsWalletOnly = !kDebugMode;
 
-  List<String> get defaultCoins => ['KMD', 'BTC-segwit'];
-  List<String> get coinsFiat => ['BTC-segwit', 'KMD'];
+  // your digi-byte defaults (DGB first)
+  List<String> get defaultCoins => ['DGB', 'BTC-segwit', 'KMD'];
+  List<String> get coinsFiat     => ['BTC-segwit', 'DGB'];
+
+  // the existing wallet-only coins
+  List<String> get walletOnlyCoins => [
+    'AAVE-FTM20',
+    'AGIX-ERC20',
+    // …etc.
+  ];
+
   List<String> get walletOnlyCoins => [
         'AAVE-FTM20',
         'AGIX-ERC20',
@@ -192,22 +201,22 @@ class AppConfig {
   // support channels (showed on help page)
   List<SupportChannel> supportChannels = [
     SupportChannel(
-      title: 'DISCORD',
-      subtitle: 'Komodo #support',
-      link: 'https://komodoplatform.com/discord',
+      title: 'COMMUNITY',
+      subtitle: 'Community #support',
+      link: 'https://www.digibyte.org/en-us/#community',
       icon: SizedBox(
         width: 60,
-        child: Image.asset('assets/discord_logo.png'),
+        child: Image.asset('assets/branding/logo_app.png'),
       ),
     ),
   ];
 
   // endpoint source code:
   // https://github.com/KomodoPlatform/discord_feed_parser
-  bool get isFeedEnabled => true;
+  bool get isFeedEnabled => false;
   String get feedProviderSourceUrl => 'https://komodo.earth/messages';
   NewsSource get defaultNewsSource => NewsSource(
-        name: 'Komodo #official-news',
+        name: 'DigiByte #official-news',
         url:
             'https://discord.com/channels/412898016371015680/412915799251222539',
         pic:
@@ -270,5 +279,5 @@ class AppConfig {
 
   /// We're using different rpc ports for different wallet packages
   /// in order to allow multiple wallets to run simultaneously.
-  int get rpcPort => 7783;
+  int get rpcPort => 7773;
 }

@@ -3,7 +3,7 @@ FROM docker.io/ubuntu:22.04
 # Credit to Cirrus Labs for the original Dockerfile
 # LABEL org.opencontainers.image.source=https://github.com/cirruslabs/docker-images-android
 
-ENV USER="komodo"
+ENV USER="digibyte"
 ENV USER_ID=1000
 
 RUN apt update && apt install -y sudo && \
@@ -54,8 +54,8 @@ RUN set -o xtrace \
     && sudo mkdir -p /root/.android \
     && sudo chown -R $USER:$USER /root \
     && touch /root/.android/repositories.cfg \
-    && git config --global user.email "hello@komodoplatform.com" \
-    && git config --global user.name "Komodo Platform" \
+    && git config --global user.email "hello@digibyte.org" \
+    && git config --global user.name "DigiByte Foundation" \
     && yes | sdkmanager \
     "platforms;android-$ANDROID_PLATFORM_VERSION" \
     "build-tools;$ANDROID_BUILD_TOOLS_VERSION" \

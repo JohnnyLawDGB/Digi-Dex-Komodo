@@ -1,6 +1,6 @@
 FROM docker.io/ubuntu:22.04
 
-LABEL Author="Onur Özkan <onur@komodoplatform.com>"
+LABEL Author="Onur Özkan <onur@digibyte.org>"
 ARG KDF_BRANCH=main
 
 RUN apt-get update -y && \
@@ -58,7 +58,7 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
     rustup target add aarch64-linux-android && \
     rustup target add armv7-linux-androideabi && \
     apt install -y python3 python3-pip git curl nodejs python3-venv sudo && \
-    git clone https://github.com/KomodoPlatform/komodo-defi-framework.git /app && \
+    git clone https://github.com/DigiByteFoundation/digibyte-defi-framework.git /app && \
     cd /app && \
     git fetch --all && \
     git checkout origin/$KDF_BRANCH && \

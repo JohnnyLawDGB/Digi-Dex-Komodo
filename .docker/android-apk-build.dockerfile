@@ -1,4 +1,4 @@
-FROM komodo/kdf-android:latest AS build 
+FROM digibyte/kdf-android:latest AS build 
 
 RUN cd /app && \ 
     rustup default nightly-2023-06-01 && \
@@ -10,11 +10,11 @@ RUN cd /app && \
     mv target/aarch64-linux-android/release/libkdflib.a target/aarch64-linux-android/release/libmm2.a && \
     mv target/armv7-linux-androideabi/release/libkdflib.a target/armv7-linux-androideabi/release/libmm2.a
 
-FROM komodo/android-sdk:34 AS final
+FROM digibyte/android-sdk:34 AS final
 
 ENV FLUTTER_VERSION="2.8.1"
-ENV FLUTTER_HOME="/home/komodo/.flutter-sdk"
-ENV USER="komodo"
+ENV FLUTTER_HOME="/home/digibyte/.flutter-sdk"
+ENV USER="digibyte"
 ENV PATH=$PATH:$FLUTTER_HOME/bin
 ENV ANDROID_AARCH64_LIB=android/app/src/main/cpp/libs/arm64-v8a
 ENV ANDROID_AARCH64_LIB_SRC=/app/target/aarch64-linux-android/release/libmm2.a

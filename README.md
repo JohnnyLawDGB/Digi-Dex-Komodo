@@ -80,9 +80,9 @@ sh .docker/build_apk_release.sh
 You can also manually build using docker with the following commands:
 
 ```bash
-docker build -f .docker/android-sdk.dockerfile . -t komodo/android-sdk:34
-docker build -f .docker/android-apk-build.dockerfile . -t komodo/komodo-wallet-mobile
-docker run --rm -v ./build:/app/build komodo/komodo-wallet-mobile:latest
+docker build -f .docker/android-sdk.dockerfile . -t digibyte/android-sdk:34
+docker build -f .docker/android-apk-build.dockerfile . -t digibyte/digibyte-wallet-mobile
+docker run --rm -v ./build:/app/build digibyte/digibyte-wallet-mobile:latest
 ```
 
 The build output should be in the following directory: `build/app/outputs/flutter-apk/app-release.apk`

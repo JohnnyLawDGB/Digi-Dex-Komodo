@@ -50,7 +50,7 @@ class OrderBookProvider extends ChangeNotifier {
       syncOrderbook.getDepth(coinsPair);
 
   // deprecated in favor of depthsForCoin
-  // https://github.com/KomodoPlatform/AtomicDEX-mobile/issues/1146
+  // https://github.com/JohnnyLawDGB/Digi-Dex-Komodo/issues/1146
   List<Orderbook> orderbooksForCoin([Coin coin]) =>
       syncOrderbook.orderbooksForCoin(coin);
 
@@ -58,7 +58,7 @@ class OrderBookProvider extends ChangeNotifier {
       syncOrderbook.depthForCoin(coin, type);
 
   // deprecated in favor of subscribeDepth
-  // https://github.com/KomodoPlatform/AtomicDEX-mobile/issues/1146
+  // https://github.com/JohnnyLawDGB/Digi-Dex-Komodo/issues/1146
   Future<void> subscribeCoin([Coin coin, CoinType type]) =>
       syncOrderbook.subscribeCoin(coin, type);
 

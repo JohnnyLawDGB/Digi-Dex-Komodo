@@ -13,7 +13,7 @@ class AppConfig {
   int get maxCoinEnabledIOS => 20;
 
   String get transactionWarningInfoUrl =>
-      'https://komodoplatform.com/en/blog/preventing-address-poisoning';
+      'https://github.com/JohnnyLawDGB/Digi-Dex-Komodo';
 
   // number of decimal places for trade amount input fields
   int get tradeFormPrecision => 8;

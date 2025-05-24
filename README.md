@@ -1,13 +1,13 @@
 
 # DigiByte Wallet - Open Source GitHub Repository 🚀
 
-![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/komodoplatform/atomicdex-mobile/build.yml)
-![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/komodoplatform/atomicdex-mobile)
-![GitHub contributors](https://img.shields.io/github/contributors-anon/komodoplatform/atomicdex-mobile)
-![GitHub last commit](https://img.shields.io/github/last-commit/komodoplatform/atomicdex-mobile)
-![GitHub top language](https://img.shields.io/github/languages/top/komodoplatform/atomicdex-mobile)
-![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/komodoplatform/atomicdex-mobile)
-![GitHub repo size](https://img.shields.io/github/repo-size/komodoplatform/atomicdex-mobile)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/JohnnyLawDGB/Digi-Dex-Komodo/build.yml)
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/JohnnyLawDGB/Digi-Dex-Komodo)
+![GitHub contributors](https://img.shields.io/github/contributors-anon/JohnnyLawDGB/Digi-Dex-Komodo)
+![GitHub last commit](https://img.shields.io/github/last-commit/JohnnyLawDGB/Digi-Dex-Komodo)
+![GitHub top language](https://img.shields.io/github/languages/top/JohnnyLawDGB/Digi-Dex-Komodo)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/JohnnyLawDGB/Digi-Dex-Komodo)
+![GitHub repo size](https://img.shields.io/github/repo-size/JohnnyLawDGB/Digi-Dex-Komodo)
 ![Twitter Follow](https://img.shields.io/twitter/follow/DigiByteCoin?style=social)
 
 Welcome to the DigiByte Wallet open-source repository! This cutting-edge project is brought to you by DigiByte, providing a mighty non-custodial wallet and decentralised exchange all in one mobile app. Take control of your cryptocurrencies and trade seamlessly on your mobile phone or tablet with DigiByte Wallet!
@@ -67,7 +67,7 @@ Windows: `choco install jq`, [Choco software](https://chocolatey.org/)
 
 ## Build and run
 
-https://github.com/KomodoPlatform/AtomicDEX-mobile/wiki/Project-Setup#build-and-run
+https://github.com/JohnnyLawDGB/Digi-Dex-Komodo/wiki/Project-Setup#build-and-run
 
 ### Build with docker
 
@@ -116,7 +116,7 @@ Ensure you run the most recent DigiByte DeFi Framework [stable release](https://
 
 **Relative to the Flutter project's root folder. E.g. if your name was Bob and you cloned the flutter project into your macOS home directory, the full path for the iOS API would be `/Users/Bob/atomicdex_mobile/ios/libmm2.a`*
 
-See [our wiki](https://github.com/KomodoPlatform/atomicdex-mobile/wiki/Project-Setup#android-builds-from-scratch) here for more thorough project setup steps. Besides installing the API binary, DigiByte Wallet is set up similarly to any other cloned Flutter project.
+See [our wiki](https://github.com/JohnnyLawDGB/Digi-Dex-Komodo/wiki/Project-Setup#android-builds-from-scratch) here for more thorough project setup steps. Besides installing the API binary, DigiByte Wallet is set up similarly to any other cloned Flutter project.
 
 ### Setup with Python script
 

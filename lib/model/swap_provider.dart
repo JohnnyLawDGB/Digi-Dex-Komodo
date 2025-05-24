@@ -173,7 +173,7 @@ class SwapMonitor {
   }
 
   /// Fresh status of swap [uuid].
-  /// cf. https://developers.komodoplatform.com/basic-docs/atomicdex/atomicdex-api.html#my-swap-status
+  /// cf. https://github.com/JohnnyLawDGB/Digi-Dex-Komodo/wiki/basic-docs/atomicdex/atomicdex-api.html#my-swap-status
   Swap swap(String uuid) {
     if (uuid == null) return null;
     return _swaps[uuid];

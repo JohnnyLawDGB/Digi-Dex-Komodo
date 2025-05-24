@@ -16,7 +16,7 @@ void main() {
       final List<String> tickers =
           symbols.map((String symbol) => getCoinTicker(symbol)).toList();
 
-      expect(tickers, tickers.map((_) => 'KMD'));
+      expect(tickers, tickers.map((_) => 'KMD').toList());
     });
 
     test(

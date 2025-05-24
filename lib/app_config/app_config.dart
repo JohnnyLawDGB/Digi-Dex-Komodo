@@ -55,13 +55,6 @@ class AppConfig {
   List<String> get defaultCoins => ['DGB', 'BTC-segwit', 'KMD'];
   List<String> get coinsFiat     => ['BTC-segwit', 'DGB'];
 
-  // the existing wallet-only coins
-  List<String> get walletOnlyCoins => [
-    'AAVE-FTM20',
-    'AGIX-ERC20',
-    // …etc.
-  ];
-
   List<String> get walletOnlyCoins => [
         'AAVE-FTM20',
         'AGIX-ERC20',

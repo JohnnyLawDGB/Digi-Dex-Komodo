@@ -49,7 +49,7 @@ class AppConfig {
   String get appCompanyLong => 'DigiByte';
   String get appCompanyShort => 'DigiByte';
     // from master
-  final bool kIsWalletOnly = !kDebugMode;
+  final bool kIsWalletOnly = false;
 
   // your digi-byte defaults (DGB first)
   List<String> get defaultCoins => ['DGB', 'BTC-segwit', 'KMD'];

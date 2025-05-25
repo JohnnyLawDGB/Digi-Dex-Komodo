@@ -53,8 +53,12 @@ This repository is currently in the process of undergoing safety and Flutter ver
 
 Build requires up-to-date version of coins file from https://github.com/KomodoPlatform/coins
 
-Commit hash and sha256sum of coins file is specified in `coins_ci.json`.
-You may download one manually or use `fetch_coins.sh` script on Linux and macOS or `fetch_coins.ps1` PowerShell script on Windows.
+Commit hash and sha256sum of the coins file is specified in `coins_ci.json`.
+Update the `coins_repo_commit` value to the desired commit and run
+`./fetch_coins.sh` on Linux/macOS (or `fetch_coins.ps1` on Windows) before
+building to embed the latest coin lists and icons. The wallet will download a
+fresh coins file on every launch, but icons for new coins are only bundled when
+this script is executed prior to the build.
 
 The `fetch_coins` script depends on sha256sum and jq utils:
 
@@ -64,6 +68,10 @@ MacOS: `brew install coreutils jq`, [Brew software](https://brew.sh/)
 
 Windows: `choco install jq`, [Choco software](https://chocolatey.org/)
 
+
+### Enable the DEX
+To use swap features set `kIsWalletOnly` to `false` in
+`lib/app_config/app_config.dart`.
 
 ## Build and run
 

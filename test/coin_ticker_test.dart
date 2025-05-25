@@ -16,7 +16,7 @@ void main() {
       final List<String> tickers =
           symbols.map((String symbol) => getCoinTicker(symbol)).toList();
 
-      expect(tickers, tickers.map((_) => 'KMD'));
+      expect(tickers, everyElement('KMD'));
     });
 
     test(
@@ -28,7 +28,7 @@ void main() {
       final List<String> tickers =
           symbols.map((String symbol) => getCoinTicker(symbol)).toList();
 
-      expect(tickers, tickers.map((_) => 'KMD old').toList());
+      expect(tickers, everyElement('KMD old'));
     });
 
     test('returns the input for invalid abbreviation', () {

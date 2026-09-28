@@ -72,7 +72,7 @@ Each repo is pinned by full commit hash.
 | `digibyte-wallet` (new) | The Flutter app. All DigiByte-specific code. | — |
 | `kdf` (fork of GLEECBTC/komodo-defi-framework) | One patch series: fee and burn public keys, fee rate, DGB as the discount ticker, default network ID. CI builds, checksums and signs the Android armv7/arm64 and iOS aarch64 binaries, with 16 KB page alignment on Android. | Rebased onto each upstream release tag |
 | `komodo-defi-sdk-flutter` (fork) | One patch: network ID and seed nodes injectable through `KomodoDefiSdkConfig`, default unchanged (6133). Offered upstream as a PR; if merged, this fork is retired. | Rebased as needed |
-| `coins` (fork of GLEECBTC/coins) | Only the listed assets, `seed-nodes.json` for the DigiByte network ID, DGB electrum servers (DigiByte's first, cipig.net as fallback), and testnet entries for the test network. | Selective cherry-picks |
+| `coins` (fork of GLEECBTC/coins) | Only the listed assets, `seed-nodes.json` for the DigiByte network ID, electrum servers (§7.2), and testnet entries for the test network (§9). | Selective cherry-picks |
 
 ### 4.2 App layering
 
@@ -194,7 +194,7 @@ KMD rewards, the test-coin faucet, ZHTLC/Pirate activation, the in-app update ch
  market makers:   KDF fork + simple_market_maker bot; one config per DGB/X
                   pair; prices from CoinGecko/Binance; spread and max volume
                   per pair
- DGB electrum:    ≥2 DigiByte-operated SSL servers; cipig.net fallback
+ DGB electrum:    ≥2 DigiByte-operated SSL servers + cipi's servers (§7.2)
 ```
 
 - **Network ID:** one unused value, set in three places: the KDF fork default, the app's `brand.dart` (via the SDK patch), and the coins fork's `seed-nodes.json`. It must not be 6133, 8762 or 7777.
@@ -220,10 +220,26 @@ The list is written to `coins` fork `seed-nodes.json` and `lib/config/brand.dart
 - **Caching:** sparkline data is cached for 10 minutes.
 - **Failure:** if both providers fail, the app shows "price unavailable" and all wallet functions keep working.
 
-### 7.2 Non-DGB chains
+### 7.2 Electrum and RPC servers
 
-- The coins fork lists at least 2 public electrum servers (BTC/LTC/DOGE) or public RPC servers (ETH/BSC for USDT/USDC) per chain.
-- A nightly CI job probes every server and opens a PR to remove any that are down.
+**Starting point:** cipi (Komodo/Gleec) runs ElectrumX servers for 34 coins, listed in `GLEECBTC/coins/electrums/` (checked at commit `2b0aefb`, 2026-09-25). Each coin has 3 hosts, `<coin>.electrum{1,2,3}.cipig.net`, serving TCP, SSL and WSS.
+
+| Coin | TCP / SSL / WSS ports | Live on 2026-09-28 (ElectrumX 2.0.0) |
+|---|---|---|
+| DGB | 10059 / 20059 / 30059 | electrum1 ✓, electrum2 ✓, electrum3 ✗ (connection refused) |
+| BTC | 10000 / 20000 / 30000 | electrum1 ✓, electrum2 ✓, electrum3 ✗ |
+| LTC | 10063 / 20063 / 30063 | electrum1 ✓, electrum2 ✓, electrum3 ✗ |
+| DOGE | 10060 / 20060 / 30060 | electrum1 ✓, electrum2 ✓, electrum3 ✗ |
+
+Other cipig-covered coins that could become DGB pairs later: BCH, DASH, ZEC, RVN, SYS, QTUM, LBC, FTC, VIA and others (see `electrums/`).
+
+**Rules for the coins fork:**
+- **SSL only in the app.** The TCP entries are dropped, per §8.2.
+- **DGB:** DigiByte-operated servers first (≥2), then cipi's.
+- **Non-DGB UTXO chains:** cipi's servers, plus at least one other public operator per chain where one exists, so no chain depends on a single operator.
+- **ETH/BSC (USDT/USDC):** at least 2 public RPC servers per chain.
+- **Nightly CI probe** (`server.version` over SSL) against every server; it opens a PR when one is down. The electrum3 outage above is the kind of thing it should catch.
+- **Contact:** cipi (`cipi@komodoplatform.com`, Discord `cipi#4502`), from the coins repo. Tell cipi before launch that a DigiByte app will depend on these servers.
 
 ### 7.3 Build pipeline (GitHub Actions)
 
@@ -313,7 +329,12 @@ The list is written to `coins` fork `seed-nodes.json` and `lib/config/brand.dart
 | End-to-end on device | `integration_test` on Android emulator and iOS simulator: create/restore → activate → receive → send → swap against a test market-maker bot | Nightly; required before any release |
 | KDF fork | Upstream swap tests, plus: the correct fee address and rate are paid; a swap with the wrong fee is rejected by the maker | Every fork rebase |
 
-**Test network:** one seed node and one market-maker bot on a separate test network ID, trading DGB testnet against a second testnet coin. Whether the coins repo still has testnet DGB/LTC entries is verified in M0; missing entries are added to the coins fork.
+**Test network:** one seed node and one market-maker bot on a separate test network ID.
+- **The coins repo has no DGB or LTC testnet entries** (checked 2026-09-28). The testnet coins it does have include `TESTBTC`, `DOC` and `MARTY`, which are served by cipig electrums.
+- **M0 staging:**
+  1. First prove the fork, network and fee path with `DOC`↔`MARTY`. These are Komodo test coins with live electrums, so no new infrastructure is needed.
+  2. Then add a `tDGB` entry to the coins fork, backed by one DigiByte-operated testnet ElectrumX server, and swap `tDGB`↔`TESTBTC`.
+  3. In this testnet setup, the DEX fee is paid on whichever testnet coin is the taker's.
 
 ## 10. Milestones
 
@@ -339,5 +360,6 @@ Ordered by risk, riskiest first. Each milestone ends with an installable demo.
 | Initial DGB/X pair list and market-maker inventory per pair | Product owner | M2 |
 | Whether `komodo_cex_market_data` providers can be selected by config (§7.1) | Engineering | M1 |
 | Whether `flutter_secure_storage` 10 supports biometric-bound access control on both platforms (§8.1) | Engineering | M1 |
-| Testnet DGB/LTC entries in the coins repo (§9) | Engineering | M0 |
+| DGB testnet ElectrumX server and `tDGB` coins entry (§9) | Engineering (DigiByte ops) | M0 step 2 |
+| Notify cipi of the dependency; ask whether the electrum3 hosts are being retired (§7.2) | Product owner | M2 |
 | Whether the legacy committed key matches the Play upload key (§8.4) | Product owner (Play Console access) | Before any legacy release |

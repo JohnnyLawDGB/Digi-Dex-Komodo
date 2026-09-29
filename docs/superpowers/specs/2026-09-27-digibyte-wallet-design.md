@@ -72,7 +72,7 @@ Each repo is pinned by full commit hash.
 | `digibyte-wallet` (new) | The Flutter app. All DigiByte-specific code. | — |
 | `kdf` (fork of GLEECBTC/komodo-defi-framework) | One patch series: fee and burn public keys, fee rate, DGB as the discount ticker, default network ID. CI builds, checksums and signs the Android armv7/arm64 and iOS aarch64 binaries, with 16 KB page alignment on Android. | Rebased onto each upstream release tag |
 | `komodo-defi-sdk-flutter` (fork) | One patch: network ID and seed nodes injectable through `KomodoDefiSdkConfig`, default unchanged (6133). Offered upstream as a PR; if merged, this fork is retired. | Rebased as needed |
-| `coins` (fork of GLEECBTC/coins) | Only the listed assets, `seed-nodes.json` for the DigiByte network ID, electrum servers (§7.2), and testnet entries for the test network (§9). | Selective cherry-picks |
+| `coins` (fork of GLEECBTC/coins) | Only the listed assets, `seed-nodes.json` for the DigiByte network ID, electrum servers (§7.2), and the `DOC`/`MARTY` test coins for CI (§9). | Selective cherry-picks |
 
 ### 4.2 App layering
 
@@ -352,23 +352,25 @@ Other cipig-covered coins that could become DGB pairs later: BCH, DASH, ZEC, RVN
 |---|---|---|
 | Unit | Blocs (`bloc_test`), repositories against a fake SDK, typed `buy`/`sell`/recovery wrapper, fee math, address-poisoning check, log redaction | Every PR |
 | Widget / golden | Every screen in light and dark themes, phone sizes, error/empty/loading states | Every PR |
-| Engine integration | Repositories against a real KDF (`komodo_defi_harness`) on the test network with testnet coins | Every PR (Linux runner) |
+| Engine integration | Repositories against a real KDF (`komodo_defi_harness`) on a CI network ID with `DOC`/`MARTY` | Every PR (Linux runner) |
 | End-to-end on device | `integration_test` on Android emulator and iOS simulator: create/restore → activate → receive → send → swap against a test market-maker bot | Nightly; required before any release |
 | KDF fork | Upstream swap tests, plus: the correct fee address and rate are paid; a swap with the wrong fee is rejected by the maker | Every fork rebase |
 
-**Test network:** one seed node and one market-maker bot on a separate test network ID.
+**Test network:** one seed node and one market-maker bot on a private network ID, separate from production.
 - **The coins repo has no DGB or LTC testnet entries** (checked 2026-09-28). The testnet coins it does have include `TESTBTC`, `DOC` and `MARTY`, which are served by cipig electrums.
-- **M0 staging:**
-  1. First prove the fork, network and fee path with `DOC`↔`MARTY`. These are Komodo test coins with live electrums, so no new infrastructure is needed.
-  2. Then add a `tDGB` entry to the coins fork, backed by one DigiByte-operated testnet ElectrumX server, and swap `tDGB`↔`TESTBTC`.
-  3. In this testnet setup, the DEX fee is paid on whichever testnet coin is the taker's.
+- **M0 staging (owner decision 2026-09-29: test on mainnet with small real amounts, no DGB testnet):**
+  1. Swap `DGB`↔`LTC` on **mainnet coins** over a **private DigiByte network ID** (1 seed node, 1 market-maker bot, both owner-run). LTC is chosen for low fees and live cipig electrums, and DGB/LTC is a launch pair.
+  2. Amounts stay small: the bot's inventory is capped (e.g. ≤ 2,000 DGB and ≤ 0.5 LTC), and each test swap is sized just above KDF's minimum trade volume.
+  3. The DEX fee goes to the fork's fee address, which DigiByte controls, so the only real cost is on-chain network fees.
+  4. No `tDGB` coin entry or DGB testnet ElectrumX is built.
+- **Per-PR engine integration (M1 CI):** uses the free Komodo test coins `DOC`/`MARTY` on a separate CI network ID, so CI never spends real funds.
 
 ## 10. Milestones
 
 Ordered by risk, riskiest first. Each milestone ends with an installable demo.
 
 - **M0: Proving the stack.** Build the KDF fork patch and its Android/iOS builds, the SDK patch that makes the network ID injectable, and the coins fork with a test network (1 seed node, 1 bot).
-  - **Exit:** a bare Flutter app on a physical phone completes a testnet DGB↔X swap on the DigiByte network and pays the fork's fee address.
+  - **Exit:** a bare Flutter app on a physical phone completes a small mainnet DGB↔LTC swap on a private DigiByte network ID, and the fork's fee address receives the DEX fee.
   - Calendar estimates for M1–M3 are set only after M0.
 - **M1: Wallet.** App skeleton (§4.2, `brand.dart`, theme, routing, CI), onboarding, unlock and biometrics, portfolio, asset detail, send, receive, settings.
   - **Exit:** internal TestFlight and Play builds, usable on mainnet as a wallet.
@@ -387,7 +389,6 @@ Ordered by risk, riskiest first. Each milestone ends with an installable demo.
 | Initial DGB/X pair list and market-maker inventory per pair | Product owner | M2 |
 | Whether `komodo_cex_market_data` providers can be selected by config (§7.1) | Engineering | M1 |
 | Whether `flutter_secure_storage` 10 supports biometric-bound access control on both platforms (§8.1) | Engineering | M1 |
-| DGB testnet ElectrumX server and `tDGB` coins entry (§9) | Engineering (DigiByte ops) | M0 step 2 |
 | Notify cipi of the dependency; ask whether the electrum3 hosts are being retired (§7.2) | Product owner | M2 |
 | ~~Open `electrum.digiscope.me` publicly (§7.2)~~ Done 2026-09-29; verified | Product owner | M0 |
 | Make the dev-workstation ElectrumX public (DNS, TLS, port-forward) or replace it with a second VPS (§7.2) | Product owner | M2 |

@@ -76,7 +76,7 @@ Full table in spec §3.
 
 | Server | Status | Notes |
 |---|---|---|
-| `electrum.digiscope.me` (VPS 134.199.198.90) | **Being opened now** | Planned as primary. Assumed ports SSL 50002 / WSS 50004. Needs DNS, TLS, firewall and cost limits. |
+| `electrum.digiscope.me` (VPS 134.199.198.90) | **Live, verified 2026-09-29** | Primary. SSL 50002 / WSS 50004, ElectrumX 1.16.0. See spec §7.2. |
 | Dev workstation ElectrumX 1.19.0 (`~/electrumx-dgb`, systemd `electrumx.service`) | Synced to mainnet | TCP 50001 only, not publicly reachable. Cost limits are 0, i.e. off. Dev/M0 only. |
 | `dgb.electrum1/2.cipig.net` | Live | electrum3 refused connections for DGB, BTC, LTC and DOGE on 2026-09-28 |
 
@@ -102,7 +102,7 @@ Details in spec §10.
 ## 6. Waiting on the owner
 
 - [ ] Review and approve the spec
-- [ ] Bring `electrum.digiscope.me` online (DNS, TLS, 50002/50004, cost limits)
+- [x] Bring `electrum.digiscope.me` online. Done and verified 2026-09-29 (spec §7.2)
 - [ ] Seed-node list for the DigiByte swap network (the owner said a list exists)
 - [ ] DEX fee rate, discount rule, fee and burn public keys
 - [ ] DigiByte network ID value (engineering proposes one; the owner confirms)

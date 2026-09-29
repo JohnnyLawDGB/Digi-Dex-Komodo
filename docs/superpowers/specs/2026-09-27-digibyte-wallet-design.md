@@ -237,9 +237,15 @@ Other cipig-covered coins that could become DGB pairs later: BCH, DASH, ZEC, RVN
 
 | # | Host | Operator | Status on 2026-09-29 |
 |---|---|---|---|
-| 1 | `electrum.digiscope.me` — SSL 50002, WSS 50004 (assumed standard ports) | DigiByte (VPS at 134.199.198.90) | Instance running, but not publicly reachable yet. Owner is opening it up. |
+| 1 | `electrum.digiscope.me` — `ssl://electrum.digiscope.me:50002`, `wss://electrum.digiscope.me:50004` | DigiByte (VPS at 134.199.198.90) | **Live.** Verified from outside the VPS: Let's Encrypt cert valid until 2026-12-28 with auto-renewal, ElectrumX 1.16.0 on protocol 1.4, DGB genesis `7497ea1b465e…` matches, tip equal to both cipig servers, WSS upgrade returns 101. |
 | 2 | Second DigiByte-operated server (the ElectrumX 1.19.0 on the dev workstation) | DigiByte | Synced to mainnet tip. TCP 50001 only, not reachable from the internet. M0/dev use only until it gets a DNS name, SSL and a port-forward. |
 | 3–4 | `dgb.electrum1.cipig.net`, `dgb.electrum2.cipig.net` (SSL 20059, WSS 30059) | cipi | Live |
+
+**`electrum.digiscope.me` operating notes (owner's setup, 2026-09-29):**
+- The firewall caps public connections at 800 in total and 16 per IP, below ElectrumX's 1,000-session cap. When ElectrumX hits that cap it closes every port, including the internal one DigiScope's tx-monitor uses, so public traffic must never reach it.
+- A watchdog runs every 5 minutes. It restarts ElectrumX and tx-monitor if the internal port stops listening, and it alerts above 700 public connections.
+- The server is down for about a minute at the daily 4am restart and during the monthly compaction. The app must fail over to the cipig servers for those gaps, so KDF's electrum list needs at least 2 more servers after this one.
+- `REPORT_SERVICES` announces the server to ElectrumX peers, so third-party DGB wallets may find it. The 800-connection cap bounds that load.
 
 **Requirements before a DigiByte-operated server goes into the coins fork:**
 - A DNS name and a valid public TLS certificate (Let's Encrypt), with automatic renewal.
@@ -378,6 +384,6 @@ Ordered by risk, riskiest first. Each milestone ends with an installable demo.
 | Whether `flutter_secure_storage` 10 supports biometric-bound access control on both platforms (§8.1) | Engineering | M1 |
 | DGB testnet ElectrumX server and `tDGB` coins entry (§9) | Engineering (DigiByte ops) | M0 step 2 |
 | Notify cipi of the dependency; ask whether the electrum3 hosts are being retired (§7.2) | Product owner | M2 |
-| Open `electrum.digiscope.me` publicly: DNS record, TLS certificate, SSL/WSS ports, cost limits (§7.2) | Product owner | M0 |
+| ~~Open `electrum.digiscope.me` publicly (§7.2)~~ Done 2026-09-29; verified | Product owner | M0 |
 | Make the dev-workstation ElectrumX public (DNS, TLS, port-forward) or replace it with a second VPS (§7.2) | Product owner | M2 |
 | Whether the legacy committed key matches the Play upload key (§8.4) | Product owner (Play Console access) | Before any legacy release |

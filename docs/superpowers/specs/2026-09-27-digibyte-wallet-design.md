@@ -233,9 +233,25 @@ The list is written to `coins` fork `seed-nodes.json` and `lib/config/brand.dart
 
 Other cipig-covered coins that could become DGB pairs later: BCH, DASH, ZEC, RVN, SYS, QTUM, LBC, FTC, VIA and others (see `electrums/`).
 
+**DGB server list, in priority order:**
+
+| # | Host | Operator | Status on 2026-09-29 |
+|---|---|---|---|
+| 1 | `electrum.digiscope.me` — SSL 50002, WSS 50004 (assumed standard ports) | DigiByte (VPS at 134.199.198.90) | Instance running, but not publicly reachable yet. Owner is opening it up. |
+| 2 | Second DigiByte-operated server (the ElectrumX 1.19.0 on the dev workstation) | DigiByte | Synced to mainnet tip. TCP 50001 only, not reachable from the internet. M0/dev use only until it gets a DNS name, SSL and a port-forward. |
+| 3–4 | `dgb.electrum1.cipig.net`, `dgb.electrum2.cipig.net` (SSL 20059, WSS 30059) | cipi | Live |
+
+**Requirements before a DigiByte-operated server goes into the coins fork:**
+- A DNS name and a valid public TLS certificate (Let's Encrypt), with automatic renewal.
+- `SERVICES` includes `ssl://:50002` and `wss://:50004`. Plain TCP is optional and never used by the app.
+- Firewall allows 50002/50004. The ElectrumX `rpc://` admin port stays on localhost.
+- ElectrumX cost limits are enabled (`COST_SOFT_LIMIT`/`COST_HARD_LIMIT` not 0) and `MAX_SESSIONS` is sized for expected users.
+- It passes the nightly probe: SSL handshake, `server.version`, and a height within 2 blocks of the other servers.
+- `digibyted` fee estimation is optional. KDF uses the fixed `txfee` of 0.1 DGB/kB from the DGB coin entry and doesn't call `blockchain.estimatefee`.
+
 **Rules for the coins fork:**
 - **SSL only in the app.** The TCP entries are dropped, per §8.2.
-- **DGB:** DigiByte-operated servers first (≥2), then cipi's.
+- **DGB:** the servers in the table above, in that order.
 - **Non-DGB UTXO chains:** cipi's servers, plus at least one other public operator per chain where one exists, so no chain depends on a single operator.
 - **ETH/BSC (USDT/USDC):** at least 2 public RPC servers per chain.
 - **Nightly CI probe** (`server.version` over SSL) against every server; it opens a PR when one is down. The electrum3 outage above is the kind of thing it should catch.
@@ -362,4 +378,6 @@ Ordered by risk, riskiest first. Each milestone ends with an installable demo.
 | Whether `flutter_secure_storage` 10 supports biometric-bound access control on both platforms (§8.1) | Engineering | M1 |
 | DGB testnet ElectrumX server and `tDGB` coins entry (§9) | Engineering (DigiByte ops) | M0 step 2 |
 | Notify cipi of the dependency; ask whether the electrum3 hosts are being retired (§7.2) | Product owner | M2 |
+| Open `electrum.digiscope.me` publicly: DNS record, TLS certificate, SSL/WSS ports, cost limits (§7.2) | Product owner | M0 |
+| Make the dev-workstation ElectrumX public (DNS, TLS, port-forward) or replace it with a second VPS (§7.2) | Product owner | M2 |
 | Whether the legacy committed key matches the Play upload key (§8.4) | Product owner (Play Console access) | Before any legacy release |

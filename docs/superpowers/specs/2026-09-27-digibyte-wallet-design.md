@@ -94,6 +94,11 @@ KDF fork (static lib)            local RPC; P2P on DigiByte network ID
 - **No top-level mutable singletons.** Dependencies are wired once at start-up through `RepositoryProvider`/`MultiBlocProvider`.
 - **Widgets never touch the SDK or RPC directly.** They go through repositories, which have fakes for testing.
 - **Brand identity in one place:** `lib/config/brand.dart` holds the app name, colors, URLs, fee display text, network ID and seed nodes. Native IDs (package/bundle ID, display name, icons) live in Android/iOS build config, with a checklist in the README.
+- **App IDs sit under `digiscope.me`**, the domain the owner can prove ownership of for Google Play developer verification and Android App Links:
+  - Android `applicationId` and iOS bundle ID: `me.digiscope.wallet`. The suffix is a proposal; the `me.digiscope` root is decided.
+  - A Play package name can never change after the first upload, so the ID is fixed before the first internal build (M1).
+  - `https://digiscope.me/.well-known/assetlinks.json` carries the release signing-key fingerprint. It is only needed if the app uses verified links.
+  - This replaces the legacy `io.digibyte.dex` / `io.digibyte.dex.dgb`, which matches the decision to publish as new store listings.
 - **Navigation:** `go_router` with an auth redirect guard.
 - **Toolchain:** Flutter pinned in `.fvmrc` to the version the SDK fork commit requires (≥3.35), Dart 3 with sound null safety, `very_good_analysis` lints.
 - **Layout by feature:**
@@ -386,4 +391,5 @@ Ordered by risk, riskiest first. Each milestone ends with an installable demo.
 | Notify cipi of the dependency; ask whether the electrum3 hosts are being retired (§7.2) | Product owner | M2 |
 | ~~Open `electrum.digiscope.me` publicly (§7.2)~~ Done 2026-09-29; verified | Product owner | M0 |
 | Make the dev-workstation ElectrumX public (DNS, TLS, port-forward) or replace it with a second VPS (§7.2) | Product owner | M2 |
+| Confirm the app ID suffix under `me.digiscope` (proposed `me.digiscope.wallet`) (§4.2) | Product owner | M1 (before first Play upload) |
 | Whether the legacy committed key matches the Play upload key (§8.4) | Product owner (Play Console access) | Before any legacy release |

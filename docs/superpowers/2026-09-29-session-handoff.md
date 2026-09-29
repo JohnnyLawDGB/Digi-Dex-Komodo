@@ -11,7 +11,7 @@
 | Assessment of the legacy app | Done (§1 below) |
 | Strategy decision | Done: path **A1**, a new app on `komodo-defi-sdk-flutter` with thin forks |
 | Design, all 6 sections | Approved section by section in conversation |
-| Written spec | Committed. **Waiting for the owner's full read-through and approval.** |
+| Written spec | **Approved by the owner 2026-09-29.** |
 | Implementation plan | Not started. It is written only after the spec is approved (superpowers `writing-plans`). |
 | Code | None. No product code has been written. |
 
@@ -52,6 +52,7 @@
 | Platforms | Android and iOS at launch |
 | Existing users | New store listings; users restore from their seed phrase; no migration code |
 | Branding | DigiByte only; all branding in one config (`lib/config/brand.dart`) |
+| App IDs | Root `me.digiscope` (owner can prove digiscope.me ownership); proposed `me.digiscope.wallet` |
 | Coins | DGB pairs only (DGB/X) |
 | Operations | DigiByte runs the seed nodes, market makers and DGB electrum servers; prices come from public APIs (CoinGecko/Binance) |
 | v1 scope | Taker-only swaps; English only; deferred and dropped lists are in spec §5 |
@@ -101,7 +102,7 @@ Details in spec §10.
 
 ## 6. Waiting on the owner
 
-- [ ] Review and approve the spec
+- [x] Review and approve the spec (approved 2026-09-29)
 - [x] Bring `electrum.digiscope.me` online. Done and verified 2026-09-29 (spec §7.2)
 - [ ] Seed-node list for the DigiByte swap network (the owner said a list exists)
 - [ ] DEX fee rate, discount rule, fee and burn public keys

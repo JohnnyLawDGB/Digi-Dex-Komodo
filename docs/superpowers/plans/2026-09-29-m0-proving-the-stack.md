@@ -51,6 +51,8 @@
 
 ## Review Focus
 
+> **Execution note (2026-09-29):** KDF enforces a password policy on `rpc_password` (≥8 chars, digit, lower, upper, special, no char 3× in a row). Plain `openssl rand -hex` values fail it and KDF refuses to start. The ops scripts use `ops/tools/gen_rpc_password.sh`, and the seed installer inlines the same function.
+
 Five inputs or conditions the spec implies but no task's own feature tests cover. Each one has a pinning test in the task named.
 
 1. **`DGB-segwit` as a ticker.** The discount must apply to `DGB-segwit` (and any `DGB-*`) exactly as to `DGB`. Upstream compares exact tickers, so a segwit taker would silently pay 2%. → Task 4 test `dgb_segwit_gets_discount`.
@@ -1461,10 +1463,7 @@ mkdir -p ~/.local/bin ~/.local/share/dgb-bot/db ~/.config/dgb-dex/bot && cd /tmp
 gh release download dgb-v3.0.0-beta.1 -R JohnnyLawDGB/komodo-defi-framework -p "kdf_*-linux-x86-64.zip" -p SHA256SUMS --clobber
 grep linux-x86-64 SHA256SUMS | sha256sum -c - && unzip -o kdf_*-linux-x86-64.zip kdf -d ~/.local/bin
 curl -fsSL "https://raw.githubusercontent.com/JohnnyLawDGB/coins/${COINS_SHA}/coins" -o ~/.local/share/dgb-bot/coins
-[ -f ~/.config/dgb-dex/bot/MM2.json ] || jq --arg r "$(openssl rand -hex 16)" --arg p "$(openssl rand -hex 32)" \
-  '.rpc_password=$r | .passphrase=$p | .dbdir=(env.HOME+"/.local/share/dgb-bot/db")' \
-  ~/digibyte-dex/digibyte-wallet/ops/bot/MM2.json.example > ~/.config/dgb-dex/bot/MM2.json
-chmod 600 ~/.config/dgb-dex/bot/MM2.json
+~/digibyte-dex/digibyte-wallet/ops/bot/init_config.sh   # creates MM2.json (600) with a KDF-policy-compliant rpc_password; no-op if it exists
 cp ~/digibyte-dex/digibyte-wallet/ops/bot/kdf-bot.service ~/.config/systemd/user/
 systemctl --user daemon-reload && systemctl --user enable --now kdf-bot
 sleep 10; tail -n 30 ~/.local/share/dgb-bot/kdf.log

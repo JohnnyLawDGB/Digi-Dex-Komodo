@@ -54,7 +54,21 @@ The tasks are in order. Each one says what it unblocks.
 - [ ] Two small swaps: buy DGB with LTC, then sell DGB for LTC. Keep the app in the foreground for about 20 minutes each.
 - [ ] Optional: an iPhone plus a Mac with an Apple developer account, for the iOS check.
 
+## Already built and reviewed (all local, nothing pushed)
+
+| Repo (`~/digibyte-dex/…`) | Head | What's there |
+|---|---|---|
+| `kdf` | `fb79d4f` | Netid 2014 default; 1% fee on `DGB`/`DGB-*` pairs (2% otherwise); release workflow (Android arm64/armv7, iOS, Linux) gated on fee tests, least-privilege token; Rust pinned 1.94.0. Linux release build verified locally. **Waiting:** fee key (Task 3). |
+| `sdk` | `cf40ccd` | `KomodoDefiSdkConfig(network: KdfNetworkConfig(netId, seedNodes))` threaded to both KDF start paths; never falls back to 6133 seeds for a custom netid. **Waiting:** `build_config.json` → your KDF release + coins fork (needs publish). |
+| `coins` | `a7bce7e` | Seed `seed1.digiscope.me` (netid 2014), SSL-only DGB servers incl. digiscope; configs regenerated. **Waiting:** push. |
+| `digibyte-wallet` | `83f53c2` | Price feed (live); seed-node installer + unit; bot config/unit/start script (auto re-applies after restart); `ops/tools/` fee-key checker, KDF-compliant password generator, publish script; M0 probe app (fill-or-kill orders only, double-tap guarded, fail-closed swap status). **Waiting:** APK build after publish; real orderbook fixture from the bot. |
+
+Every piece passed an independent review. The rulings and deferred minor findings are recorded in the local ledger. Claude resumes from that ledger.
+
 ## Things found while you were away (FYI)
+
+- **KDF password rule.** KDF refuses to start unless `rpc_password` has at least 8 characters, including an uppercase letter, a lowercase letter, a digit and a special character, and no character three times in a row. The original plan used plain hex, which would have failed. The scripts now use `ops/tools/gen_rpc_password.sh`.
+- **Seed install permissions.** Review also caught that `/etc/kdf-seed` would have been unreadable by the seed's service user. This is fixed.
 
 - **Price feed source.** CoinGecko blocks the dev machine (403) and Binance refuses US locations, so the bot's price feed uses **CoinPaprika**. It is running as a user service: `systemctl --user status dgb-price-feed`, `curl -s 127.0.0.1:8765/api/v2/tickers`. The app's planned CoinGecko → Binance price sources (spec §7.1) may hit the same blocks for US users, so check this in M1.
 - **Digiscope WSS.** The coins repo's electrum scanner got a WebSocket **1011 internal error** from `electrum.digiscope.me:50004`, although a plain handshake returns 101. The phone app uses SSL (50002), so this is not blocking, but web wallets would fail. Worth a look in the ElectrumX logs.

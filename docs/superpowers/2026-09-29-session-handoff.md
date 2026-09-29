@@ -12,7 +12,7 @@
 | Strategy decision | Done: path **A1**, a new app on `komodo-defi-sdk-flutter` with thin forks |
 | Design, all 6 sections | Approved section by section in conversation |
 | Written spec | **Approved by the owner 2026-09-29.** |
-| Implementation plan | Not started. It is written only after the spec is approved (superpowers `writing-plans`). |
+| Implementation plan | **M0 plan written:** [`plans/2026-09-29-m0-proving-the-stack.md`](plans/2026-09-29-m0-proving-the-stack.md). Awaiting owner review and choice of execution method. |
 | Code | None. No product code has been written. |
 
 **Paused because:** ElectrumX is restarting on `digiscope.me`, which is being opened up as `electrum.digiscope.me`.

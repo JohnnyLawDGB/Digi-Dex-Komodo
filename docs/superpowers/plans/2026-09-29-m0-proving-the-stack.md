@@ -1991,7 +1991,7 @@ PW=$(jq -r .rpc_password ~/.config/dgb-dex/bot/MM2.json); curl -s http://127.0.0
 Expected: the port is open, there are two prices, and the bot has `2` orders.
 
 - [ ] **Step 2: Install and fund the phone**
-  1. `fvm flutter install -d <android-device-id>` from `m0_probe/` (find the id with `fvm flutter devices`).
+  1. `fvm flutter install -d ZY22HVMNKZ` from `m0_probe/` (the Moto G 5G; never the Note 8 `ce061716640b191c017e`).
   2. Enter a password, tap **Unlock + activate**, then **Show seed**. The owner writes the seed down, because this wallet holds real funds.
   3. The owner sends at most 1,000 DGB and at most 0.1 LTC to the two addresses shown. Wait for confirmations, then tap **Unlock + activate** again and check the balances.
 

@@ -50,7 +50,7 @@ The tasks are in order. Each one says what it unblocks.
 
 ## 6. Phone (30–60 min) → M0 exit (Task 15)
 
-- [ ] An Android phone with USB debugging, connected to the dev machine.
+- [x] Android phone connected: Moto G 5G 2023 (`ZY22HVMNKZ`, Android 14). The Note 8 is left alone for your other project.
 - [ ] Two small swaps: buy DGB with LTC, then sell DGB for LTC. Keep the app in the foreground for about 20 minutes each.
 - [ ] Optional: an iPhone plus a Mac with an Apple developer account, for the iOS check.
 

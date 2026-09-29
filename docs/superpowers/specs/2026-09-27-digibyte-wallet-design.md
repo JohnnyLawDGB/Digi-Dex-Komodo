@@ -1,7 +1,7 @@
 # DigiByte Wallet — Design Spec
 
 - **Date:** 2026-09-27
-- **Status:** Draft, awaiting review
+- **Status:** Approved by the product owner 2026-09-29
 - **Replaces:** the legacy `Digi-Dex-Komodo` app (Komodo `atomicdex-mobile` white-label, Flutter 2.8.1)
 
 ## 1. Context

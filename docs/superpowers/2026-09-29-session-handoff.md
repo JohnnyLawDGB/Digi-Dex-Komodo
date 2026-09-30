@@ -13,7 +13,7 @@
 | Design, all 6 sections | Approved section by section in conversation |
 | Written spec | **Approved by the owner 2026-09-29.** |
 | Implementation plan | **M0 plan written:** [`plans/2026-09-29-m0-proving-the-stack.md`](plans/2026-09-29-m0-proving-the-stack.md). Awaiting owner review and choice of execution method. |
-| Code | None. No product code has been written. |
+| Code | **M0 complete (2026-09-30).** Four repos are published under JohnnyLawDGB. Mainnet swaps are proven; see `digibyte-wallet/docs/m0-report.md`. |
 
 **Paused because:** ElectrumX is restarting on `digiscope.me`, which is being opened up as `electrum.digiscope.me`.
 
@@ -116,3 +116,39 @@ Details in spec §10.
 2. If `electrum.digiscope.me` is up, verify it (§4) and update spec §7.2.
 3. Once the spec is approved, invoke `superpowers:writing-plans` for M0.
 4. The upstream checkouts used for verification were in a temporary scratchpad. Re-clone them with `git clone --depth 1` from `github.com/GLEECBTC/{komodo-defi-framework,komodo-defi-sdk-flutter,coins}`, and re-check the facts in spec §3 if upstream has moved.
+
+## Update 2026-09-30 — M0 complete
+
+**Result:** the exit criterion is met. Two mainnet DGB↔LTC swaps ran on netid 2014 from the Moto G 5G (`ZY22HVMNKZ`). The DEX fee was verified on-chain in LTC (`fee10120…`) and in DGB (`c8dc5fa9…`).
+
+**Published:**
+
+| Repo (branch) | Head |
+|---|---|
+| `JohnnyLawDGB/komodo-defi-framework` (`digibyte/main`, tag `dgb-v3.0.0-beta.1`) | `4715f29` |
+| `JohnnyLawDGB/komodo-defi-sdk-flutter` (`digibyte/main`) | `6dfe132` |
+| `JohnnyLawDGB/coins` (`digibyte/main`) | `a7bce7e` |
+| `JohnnyLawDGB/digibyte-wallet` (private) | `e11f6cf` |
+
+**Running infrastructure:**
+- The seed `seed1.digiscope.me` (VPS, `kdf-seed`).
+- On the dev workstation: the bot (`kdf-bot`) and the price feed (`dgb-price-feed`).
+
+**Secrets:** index at `~/.config/dgb-dex/SECRETS-INDEX.md`.
+
+**Execution record:** `docs/superpowers/2026-09-30-m0-execution-ledger.md`, covering rulings, parked findings and the final-review triage.
+
+**Next:** write the M1 plan (superpowers `writing-plans`). Fold in:
+- **Next KDF release (key rotation):**
+  - rotate the fee key to an offline key;
+  - the P2P redial fix;
+  - CI pinning: container digest, action SHAs, `--locked`.
+- **M1 bootstrap:**
+  - disable the Gleec market-data provider;
+  - make the SDK runtime-config fallback fail fast or point at the forks;
+  - pin or disable runtime coin updates.
+- **M2 swap repository:**
+  - adopt running swaps found via `my_recent_swaps`;
+  - use `base_*` volumes only;
+  - subscribe to the orderbook topic after sign-in.
+- **Before any ARRR/SC pair:** replace the ZHTLC and Sia fee destinations.

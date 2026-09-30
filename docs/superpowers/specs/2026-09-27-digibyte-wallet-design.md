@@ -60,6 +60,12 @@ These were checked against source on 2026-09-27.
 | The SDK's `startSwap` sends v2 `start_swap`, which KDF does not dispatch; KDF only has legacy `buy`/`sell`/`recover_funds_of_swap` | `komodo_defi_rpc_methods/.../trading/start_swap.dart:16`; KDF `rpc/dispatcher/dispatcher_legacy.rs:71,106,107` |
 | The SDK provides a raw RPC escape hatch | `komodo_defi_framework/lib/komodo_defi_framework.dart:273` (`executeRpc`) |
 | KDF keeps the seed encrypted under the wallet password; the SDK uses `flutter_secure_storage` ^10 and `local_auth` ^2.3 | `komodo_defi_local_auth/pubspec.yaml`, `auth_service_kdf_extension.dart:172-176` |
+| The SDK's GitHub release downloader fetches KDF by release tag → commit, and the build transformer used to assume a `web` platform (patched in the SDK fork) | SDK fork `6dfe132` |
+| KDF `DEFAULT_NETID` is only a behaviour switch (floodsub/PEERS); there are no hard-coded seeds; P2P ports come from the netid (2014 → 15847/15857) | KDF `mm2_p2p/.../atomicdex.rs:64`, `lp_network.rs` |
+| KDF `rpc_password` policy: ≥8 characters, digit, upper, lower, special, no character 3× in a row | KDF `common/password_policy.rs` |
+| The KDF dial throttle `RECENTLY_DIALED_PEERS` is process-global and survives the SDK's in-process no-auth → wallet restart, which delays reconnecting to the seed by 5 minutes | KDF `atomicdex.rs:77-80,203-212`; fix scheduled for the next KDF release |
+| The SDK's market-data bootstrap calls `defistats.gleec.com` by default; disable the Komodo price provider via `MarketDataConfig` | SDK `komodo_cex_market_data` bootstrap |
+| **M0 proven on mainnet 2026-09-30:** two DGB↔LTC swaps on netid 2014, each with a 1% DEX fee to the DigiByte fee address (LTC and DGB) | `digibyte-wallet/docs/m0-report.md` |
 
 ## 4. Architecture
 

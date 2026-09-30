@@ -152,3 +152,10 @@ Details in spec §10.
   - use `base_*` volumes only;
   - subscribe to the orderbook topic after sign-in.
 - **Before any ARRR/SC pair:** replace the ZHTLC and Sia fee destinations.
+
+**M1 decisions (2026-09-30):**
+- App ID `me.digiscope.wallet`.
+- The owner has Play Console access, plus an Apple Developer account and a Mac.
+- The fee key is rotated in M1, together with the P2P fix and CI pinning.
+- Branding uses official DigiByte assets.
+- The docs branch stays local while M1 is planned.

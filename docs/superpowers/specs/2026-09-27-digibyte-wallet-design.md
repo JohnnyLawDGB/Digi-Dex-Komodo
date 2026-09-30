@@ -101,7 +101,7 @@ KDF fork (static lib)            local RPC; P2P on DigiByte network ID
 - **Widgets never touch the SDK or RPC directly.** They go through repositories, which have fakes for testing.
 - **Brand identity in one place:** `lib/config/brand.dart` holds the app name, colors, URLs, fee display text, network ID and seed nodes. Native IDs (package/bundle ID, display name, icons) live in Android/iOS build config, with a checklist in the README.
 - **App IDs sit under `digiscope.me`**, the domain the owner can prove ownership of for Google Play developer verification and Android App Links:
-  - Android `applicationId` and iOS bundle ID: `me.digiscope.wallet`. The suffix is a proposal; the `me.digiscope` root is decided.
+  - Android `applicationId` and iOS bundle ID: `me.digiscope.wallet` (confirmed by the owner 2026-09-30).
   - A Play package name can never change after the first upload, so the ID is fixed before the first internal build (M1).
   - `https://digiscope.me/.well-known/assetlinks.json` carries the release signing-key fingerprint. It is only needed if the app uses verified links.
   - This replaces the legacy `io.digibyte.dex` / `io.digibyte.dex.dgb`, which matches the decision to publish as new store listings.
@@ -385,6 +385,13 @@ Ordered by risk, riskiest first. Each milestone ends with an installable demo.
 - **M3: Production.** Remaining pairs and market makers, server monitoring and alerts, external security review, store listings and privacy manifests, legacy sunset release.
   - **Exit:** public launch.
 
+## 10a. M1 decisions (owner, 2026-09-30)
+
+- **App ID:** `me.digiscope.wallet` on both platforms.
+- **Store access:** the owner has a Google Play Console account and an Apple Developer account with a Mac. M1 therefore targets Play internal testing and TestFlight.
+- **Fee key:** rotated to an offline key **in M1**. One KDF release carries the rotation, the P2P redial fix and the CI pinning, and the M0 node wallet (`dgb-dex-fees`) is retired.
+- **Branding:** official DigiByte brand assets (logo and colors) go in `lib/config/brand.dart` and the native icons.
+
 ## 11. Open inputs and verification items
 
 | Item | Owner | Needed by |
@@ -398,5 +405,5 @@ Ordered by risk, riskiest first. Each milestone ends with an installable demo.
 | Notify cipi of the dependency; ask whether the electrum3 hosts are being retired (§7.2) | Product owner | M2 |
 | ~~Open `electrum.digiscope.me` publicly (§7.2)~~ Done 2026-09-29; verified | Product owner | M0 |
 | Make the dev-workstation ElectrumX public (DNS, TLS, port-forward) or replace it with a second VPS (§7.2) | Product owner | M2 |
-| Confirm the app ID suffix under `me.digiscope` (proposed `me.digiscope.wallet`) (§4.2) | Product owner | M1 (before first Play upload) |
+| ~~Confirm the app ID~~ `me.digiscope.wallet`, confirmed 2026-09-30 | Product owner | M1 |
 | Whether the legacy committed key matches the Play upload key (§8.4) | Product owner (Play Console access) | Before any legacy release |

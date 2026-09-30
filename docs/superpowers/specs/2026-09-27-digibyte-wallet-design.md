@@ -391,6 +391,7 @@ Ordered by risk, riskiest first. Each milestone ends with an installable demo.
 - **Store access:** the owner has a Google Play Console account and an Apple Developer account with a Mac. M1 therefore targets Play internal testing and TestFlight.
 - **Fee key:** rotated to an offline key **in M1**. One KDF release carries the rotation, the P2P redial fix and the CI pinning, and the M0 node wallet (`dgb-dex-fees`) is retired.
 - **Branding:** official DigiByte brand assets (logo and colors) go in `lib/config/brand.dart` and the native icons.
+- **App name:** **DigiByte DEX**, on the home screen and in both stores.
 
 ## 11. Open inputs and verification items
 

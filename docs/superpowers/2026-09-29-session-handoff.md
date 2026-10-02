@@ -159,3 +159,32 @@ Details in spec §10.
 - The fee key is rotated in M1, together with the P2P fix and CI pinning.
 - Branding uses official DigiByte assets.
 - The docs branch stays local while M1 is planned.
+
+## Update 2026-10-02: M1-B done, M1-C planned
+
+**Status**
+
+| Milestone | State | Record |
+|---|---|---|
+| M1-A (KDF release 2) | Parked; waiting on the owner's offline fee key. T2–T6 are pushed to `digibyte/main` with no tag. | `.superpowers/sdd/2026-09-30-m1a-kdf-release-2/progress.md` |
+| M1-B (app foundation) | Merged to `JohnnyLawDGB/digibyte-wallet` main via PR #1 (CI) and PR #2 (local Android release lane) | `.superpowers/sdd/2026-09-30-m1b-app-foundation/progress.md` |
+
+**M1-B release state**
+- Release 0.1.0 (versionCode 393798) is at `~/digibyte-dex/release-artifacts/digibyte-dex-0.1.0-393798.aab`.
+- It was device-tested on the Moto and then uninstalled. The owner is uploading it manually to Play internal testing.
+- After that first manual upload, later uploads go through `tool/play_upload.py`.
+- **iOS/TestFlight is deferred**: the owner chose Play first.
+
+**Owner preferences**
+- Release lanes run locally, not through GitHub Actions.
+- Claude may merge reviewed, CI-green PRs on `digibyte-wallet`. Use `--merge`, not squash.
+
+**M1-C (wallet core)**
+- Plan: `docs/superpowers/plans/2026-10-01-m1c-wallet-core.md`, 14 tasks.
+- Inputs: `.superpowers/research/m1c-design-notes.md` (decisions) and `.superpowers/research/m1c-sdk-api.md` (SDK API research).
+- The owner reviewed the summary. Execution is subagent-driven.
+- **Next:** on the owner's "go", run superpowers:subagent-driven-development on that plan. Its workspace and ledger don't exist yet, and Task 1 is the SDK fork patch.
+
+**Open items**
+- Signed-out KDF does not dial `seed1`. Verify P2P after sign-in.
+- M1-D scope: send, asset detail, history, sparkline, prices/fiat, settings (including the asset on/off toggle), log export and `digibyte:` URIs.

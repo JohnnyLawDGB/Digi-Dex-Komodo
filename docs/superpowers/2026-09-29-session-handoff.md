@@ -188,3 +188,89 @@ Details in spec §10.
 **Open items**
 - Signed-out KDF does not dial `seed1`. Verify P2P after sign-in.
 - M1-D scope: send, asset detail, history, sparkline, prices/fiat, settings (including the asset on/off toggle), log export and `digibyte:` URIs.
+
+## Update 2026-10-03: M1-C done (PR #3 merged)
+
+**Status**
+
+| Milestone | State | Record |
+|---|---|---|
+| M1-A (KDF release 2) | Still parked; waiting on the owner's offline fee key | `.superpowers/sdd/2026-09-30-m1a-kdf-release-2/progress.md` |
+| M1-B (app foundation) | Merged (PRs #1, #2) | — |
+| M1-C (wallet core) | **Merged**: PR #3, merge commit 455a131 on `JohnnyLawDGB/digibyte-wallet` main. SDK fork `digibyte/main` is at 2480d261 (pushed). | This section, and `docs/release.md` in the app repo ("M1-C acceptance (0.2.0)") |
+
+**Release 0.2.0**
+- versionCode 395391, at `~/digibyte-dex/release-artifacts/digibyte-dex-0.2.0-395391.aab`.
+- It is sideloaded on the Moto; Play upload is at the owner's discretion.
+- Uninstall the sideloaded build before installing from Play.
+
+**What M1-C added beyond the plan** (found in review or on the device):
+- **KDF RPC port collision.** Any other KDF app on 127.0.0.1:7783 (the M0 probe, Komodo Wallet) aborted the app at launch, and the old setup sent our RPC password to the foreign KDF.
+  - Fix: a free loopback port plus a per-launch RPC password chosen at startup. The leftover in-process KDF is stopped at startup.
+  - SDK guard: refuse a local KDF on a port the client does not dial.
+- **Restore seed field.** The hidden field (`obscureText`) stripped newlines, so a multi-line legacy seed was silently mangled. It is now a multi-line, masked field with copy and cut disabled.
+- **Lock.** An adopted session now starts Locked. A sign-in that finishes in the background starts the auto-lock clock.
+- **Biometrics.** A keystore lockout or cancel keeps the entry. The reset sentinel is not treated as a password, and there is no double prompt.
+- **Lockout and backup.** Lockout counting fails open on keystore errors and attempts are serialised per wallet. The backup flag is cleared only on a definite rejection, and the restore flag ordering is safe.
+- **Receive.** Shows the newest External address (never a change address), refreshes the pubkey cache after a create, and the clipboard clear is lifecycle-aware.
+
+**Acceptance on the Moto (0.2.0): all steps PASS**
+- Create plus a 24-word backup quiz.
+- Kill, then sign in.
+- Lock and auto-lock.
+- Biometrics, warm (local_auth) and cold (Keystore).
+- Lockout that survives a kill.
+- Receive, with the clipboard clear checked by hand by the owner.
+- M0 restore read-only: 746.8875 DGB, 0.05062037 LTC.
+- Legacy restore.
+- App logcat secret scan clean.
+- Not run on the device: the adopted-session relaunch, which is covered by tests.
+
+**SECURITY INCIDENT (owner decision pending)**
+- The acceptance helper typed secrets with `adb shell input text`, and `adbd` logs those commands to logcat.
+- Chunks of the real `m0-phone-seed`, the iguana test seed and the accept password were in the Moto's in-memory logcat for about 7 minutes (10-03, 05:03–05:10 device time).
+- The log was cleared, log persistence is off, and a re-check found 0 leaked lines. Host-side raw dumps were shredded.
+- Exposure: anything with adb or READ_LOGS during that window.
+- Owner decides whether to sweep the M0 wallet (≈747 DGB) to a fresh seed.
+- **Future acceptance must never type real seeds through `adb shell input text`.** Options: type only throwaway seeds, or clear logcat immediately after each secret entry.
+
+**M1-D follow-ups (parked in M1-C review; none blocked M1-C):**
+- **Seed field hardening:**
+  - the accessibility Copy/Cut action can still copy (`enableInteractiveSelection:false` plus an explicit Paste button);
+  - `autofillHints: null`;
+  - redact `SeedTextController.toString`.
+- **Biometric opt-in:**
+  - a failure is silent (`enable`→false with no feedback);
+  - `isAvailable` is weaker than the Keystore's strong-biometric requirement;
+  - add a first-time Lock-page opt-in widget test;
+  - local_auth re-prompts accept weaker biometrics (owner call).
+- **flutter_secure_storage** logs "EncryptedSharedPreferences initialization failed… Falling back to custom ciphers" (bad base-64 / could not decrypt key) on every cold start. State persists; investigate which namespace.
+- **Backup page password prompt** bypasses PasswordAttempts. The view-seed page must use PasswordGate.
+- **Portfolio:** drive rows from `sdk.watchActivationStates()` (a mid-session KDF drop leaves a row "active").
+- **Port fix:**
+  - the orphan check stops only `rpcIsUp` (a mid-startup leftover gives one error screen, and Retry recovers);
+  - the pick-to-bind race recurs per SDK restart;
+  - the one-engine-per-process assumption needs a comment;
+  - the SDK is not disposed if `seeds.init` throws after `startSdk`.
+- **Other:**
+  - `revealSeed` splits on a single space;
+  - `PassphraseMismatch`→`weakPassword` message;
+  - `_guard` has no diagnostics;
+  - `newAddress` partial-success message;
+  - LockCubit initial lifecycle seed;
+  - the I2 adopted-session code is now defense in depth (reword it);
+  - delete-wallet and disable-biometrics must delete `bio_pw_*`.
+- **Acceptance tooling:**
+  - the brief's gradle-cache bundletool jar isn't runnable; use the official bundletool-all-1.18.1.jar;
+  - screencap of a FLAG_SECURE screen returns 0 bytes on the Moto;
+  - "Don't keep activities" must be toggled by hand, not over adb;
+  - read checkbox state before tapping.
+
+**Open owner questions**
+- Departure 13: a biometric success during a lockout resets it.
+- Whether to sweep the M0 wallet after the log incident.
+- Play upload of 0.2.0.
+
+**Next**
+- M1-D plan: send, asset detail and history, prices/fiat, settings (asset toggle), log export, `digibyte:` URIs, plus the follow-ups above.
+- M1-A is still waiting on the fee key.

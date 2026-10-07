@@ -274,3 +274,84 @@ Details in spec §10.
 **Next**
 - M1-D plan: send, asset detail and history, prices/fiat, settings (asset toggle), log export, `digibyte:` URIs, plus the follow-ups above.
 - M1-A is still waiting on the fee key.
+
+## Update 2026-10-07: M1-D1 "move money" done (PR #5 merged)
+
+**Status**
+- **Merged:** M1-D1, as PR #5. The merge commit is f9fb142 on `JohnnyLawDGB/digibyte-wallet` main.
+- **SDK fork:** `digibyte/main` is at c0cb40b9. That includes the port fix (2480d261) and the confirmations fix (38ecfe08 and c0cb40b9).
+- **Spec:** `docs/superpowers/specs/2026-10-04-m1d1-move-money-design.md`.
+- **Plan:** `docs/superpowers/plans/2026-10-04-m1d1-move-money.md`.
+- **Play internal testing:** 0.3.1 (versionCode 402506) is live. The opt-in link is https://play.google.com/apps/internaltest/4700509738211946340.
+  - The service account can now release to testing tracks, so `tool/play_upload.py --track internal --status completed` runs without the owner.
+  - Production release is not granted.
+- **Device acceptance:** passed on the Moto. The full record is in the app repo's `docs/release.md`, sections "M1-D1 acceptance (0.3.0 → 0.3.1)".
+
+**What M1-D1 shipped**
+- **Send:**
+  - The Confirm screen is built from the signed preview, and fails closed on a recipient or amount mismatch.
+  - Every send needs re-authentication, by fingerprint or by password, through the shared lockout.
+  - Only one send can be in flight per wallet session.
+  - Statuses: a broadcast with an unknown outcome is never retried, and an expired preview is distinct from a definite "not sent".
+- **Asset detail:** history, tx detail, and explorer links (digiexplorer.info for DGB, mempool.space for BTC, litecoinspace.org for LTC).
+- **QR and links:**
+  - A QR scanner (mobile_scanner, using the ML Kit bundled model).
+  - `digibyte:` OS links, with singleTask launch mode. A link is held while the app is locked, while a send is in progress, or while a send is kept, and it expires on both clocks.
+- **Hardening:**
+  - Look-alike/poisoning warnings, which cover own addresses and use bech32-aware comparison.
+  - Restore seed field: no selection or copy, plus a Paste button that clears the clipboard.
+  - Biometrics: strong-only opt-in. The opt-in runs in the background and never blocks unlock. A refusal shows a notice. A 30 s Android prompt timeout cleans up any late write.
+  - Startup: one-shot Retry, and an orphaned-KDF stop.
+- **Bugs found on device and fixed in 0.3.1:**
+  - A sent tx showed "Confirmed" early, because KDF v2 reports tip+1 and the SDK merged by max.
+  - Cancelling the fingerprint opt-in left the lock screen hung, with no notice.
+  - On a cold-start link, the address check never retried.
+  - play_upload treated a 308 as a redirect.
+  - The release was refused with a 403 until the service account got its permission.
+
+**Owner decisions recorded (2026-10-04)**
+- Re-authenticate on every send.
+- Single source address per send.
+- Explorer choices as listed above.
+- Only `digibyte:` is registered with the OS; the QR scanner reads all three coins.
+- Accepted defaults for the six plan questions:
+  - look-alikes include recent addresses;
+  - ML Kit is fine for internal builds;
+  - legacy-only fallback if bech32 fails (it didn't);
+  - unconfirmed balance counts as spendable;
+  - prefer a keyed look-alike address in acceptance;
+  - the Play upload question was answered: the service account was granted.
+
+**Incident note**
+- During acceptance, an agent printed a throwaway wallet's (send1) seed words into the session transcript. That wallet was abandoned and never funded.
+- New tooling rule: never print UI node text on seed screens; use the ids-only dump helper.
+
+**M1-D2 follow-ups (from M1-D1 reviews and acceptance)**
+- **UX:**
+  - R3-1: a received mempool row shows "Dec 31, 1969".
+  - R3-2: after the 30 s timeout, the fingerprint prompt stays on screen. Treat a resume with no answer as a cancel.
+  - S3-2: sign-in preselects the first wallet, not the last used.
+  - Show "includes unconfirmed" on balances (Q4/C11).
+  - The look-alike copy for own addresses.
+  - Make the bech32 look-alike leading edge skip the HRP.
+- **Robustness:**
+  - A tx dropped from the mempool stays Pending forever in SDK/Hive.
+  - The Send re-check has no count cap.
+  - Biometric late-delete race: add a per-wallet generation token.
+  - `main.dart` logs the full startup error; restrict it to runtimeType and make sure it never carries the userpass.
+  - Wait for a noContext KDF to settle before stopping it.
+  - The pickSource tie-break.
+- **Security notes:**
+  - Removing `taskAffinity=""` brings back the default affinity (StrandHogg; low risk at minSdk 28).
+  - Revisit ML Kit before a public launch.
+  - iOS: cold-start link delivery and screenshot blocking, for the Mac pass.
+- **Plus the original M1-D2 scope:**
+  - prices, fiat and sparklines;
+  - Settings: fiat currency, theme, view seed through PasswordGate, biometric toggle, auto-lock timeout, delete wallet (which deletes `bio_pw_*`), about, assets on/off;
+  - log export;
+  - activation-state-driven portfolio rows.
+
+**Next**
+- The M1-D2 spec and plan.
+- M1-A is still waiting on the offline fee key.
+- send2, on the Moto, holds 0.4774 DGB of test funds. Its seed exists only in the app; sweep it back to the mule if wanted.

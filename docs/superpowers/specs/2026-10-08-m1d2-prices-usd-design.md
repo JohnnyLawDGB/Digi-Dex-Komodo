@@ -1,7 +1,7 @@
 # M1-D2 "Prices and USD": design spec
 
 - **Date:** 2026-10-08
-- **Status:** the design was approved in conversation; the written spec is pending owner review.
+- **Status:** approved by the owner 2026-10-08 (design in conversation, written spec reviewed; plan d646b0af).
 - **Parent spec:** `2026-09-27-digibyte-wallet-design.md`, §5.1 (Portfolio fiat values and total; asset-detail sparkline) and §7.1 (market data).
 - **Previous milestone:** `2026-10-04-m1d1-move-money-design.md`. M1-D1 was merged as PR #5, and 0.3.1 is on Play internal.
 - **Research:** `.superpowers/research/m1d2-prices.md`. It covers the SDK market data and the CoinGecko findings.

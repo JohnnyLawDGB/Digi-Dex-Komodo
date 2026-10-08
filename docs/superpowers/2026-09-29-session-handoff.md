@@ -354,4 +354,4 @@ Details in spec §10.
 **Next**
 - The M1-D2 spec and plan.
 - M1-A is still waiting on the offline fee key.
-- send2, on the Moto, holds 0.4774 DGB of test funds. Its seed exists only in the app; sweep it back to the mule if wanted.
+- send2 was swept back to the mule on 2026-10-08 by the owner (QR scan, Max, fingerprint): txid 41800b62…f79c, 0.4582 DGB, fee 0.0192. send2 is now empty.

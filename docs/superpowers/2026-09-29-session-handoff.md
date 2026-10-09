@@ -355,3 +355,39 @@ Details in spec §10.
 - The M1-D2 spec and plan.
 - M1-A is still waiting on the offline fee key.
 - send2 was swept back to the mule on 2026-10-08 by the owner (QR scan, Max, fingerprint): txid 41800b62…f79c, 0.4582 DGB, fee 0.0192. send2 is now empty.
+
+## Update 2026-10-09: M1-D2 (prices and USD) implemented, mid-acceptance
+
+**Resume from the ledger:** `.superpowers/sdd/2026-10-08-m1d2-prices-usd/progress.md`. Its "RESUME HERE" block at the end has the exact phone state and the remaining steps. It is git-ignored scratch; if it is lost, rebuild from this section and `git log`.
+
+- **Spec / plan:**
+  - Spec: `docs/superpowers/specs/2026-10-08-m1d2-prices-usd-design.md`, owner-approved (status fixed in 4998f9f4).
+  - Plan: `docs/superpowers/plans/2026-10-08-m1d2-prices-usd.md`, 10 tasks.
+- **Code:** app branch `feat/m1d2-prices-usd` at 721650b, 18 commits on main f9fb142. It is LOCAL ONLY, not pushed. 896 tests; analyze is clean.
+  - Tasks 1–9 each got an implementer and a task review, plus fix rounds where needed.
+  - The final whole-branch review (opus) found 1 Important issue: a stale note without a date over a cache with no age limit. It was fixed with the stale-note date, a 7-day cache cap, a 2 s `loadCache` bound and a deterministic history tiebreak. The scoped re-review is clean.
+  - A pre-flight scan produced 19 findings, each with a ruling in the ledger.
+- **Release:**
+  - 0.4.0, versionCode 404074, was uploaded by the service account to Play internal (completed) and installed on the Moto from Play.
+  - AAB: `~/digibyte-dex/release-artifacts/digibyte-dex-0.4.0-404074.aab` (targetSdk 36, signer ok, 16 KB rows PASS).
+- **Acceptance so far (Task 10 Steps 1–12 PASS):**
+  - Home total and per-coin USD with the 24 h change; asset USD, unit price and 3 sparklines.
+  - Unit prices within 0.12–0.47 % of the CoinGecko API.
+  - Send and Confirm show "≈ $" lines, nothing is sent, and the Confirm capture is blank.
+  - Offline: the stale note "Prices as of 11:53" appears about 15 min after the last fetch and clears about 3 min after reconnecting.
+  - R3-1: the pending receive showed its real mempool time, with no 1969 (KDF did not give epoch 0 this time; that case is covered by unit tests).
+- **Funds:** mule → legacy3 0.1 DGB, txid 25bf88d4cf79e8761626dd87c7c42211ff3dbe52b238d278750c84424cb1e103 (fee 0.0226). legacy3 now holds 0.1 DGB.
+- **R3-2 (fingerprint "Use password" ≈ 1 s) is NOT yet proven on the device:**
+  - Attempt 1 was invalid: I submitted without the owner's explicit go, and the touch came after the 30 s backstop. It did prove the backstop and late-write cleanup on the device.
+  - In attempt 2 no prompt appeared, and fingerprint ended up ON for legacy3. The owner's account of what they saw is pending.
+  - Next: Step 14, the cold-start read with "Use password", with an explicit owner go.
+- **Still to do:**
+  - Steps 14–16: R3-2 read, the S3-2 preselect, the large-font check (owner approval needed for font_scale), and endpoints plus the fingerprint-touch sign-in (ruling F6).
+  - Step 17: release.md. Step 18: push, PR, CI, merge.
+  - Then this doc and memory.
+- **Parked for later:**
+  - A rare biometric re-opt-in race (Task 8 M4; it self-heals).
+  - Possible overlap on the Home row at 2.0× font.
+  - "Confirming n/7" refreshes lazily on an open asset screen.
+  - The `cg.py` Chrome-step quoting (scratch only).
+- After M1-D2: M1-D3 (settings, log export). M1-A is still parked on the owner's offline fee key.

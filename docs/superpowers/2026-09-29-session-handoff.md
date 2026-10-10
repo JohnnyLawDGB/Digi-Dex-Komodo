@@ -495,6 +495,6 @@ DEX side of the roadmap.
 
 **Acceptance: 13 pass, 0 fail, 1 not observed.** Table in the app repo `docs/release.md` → "M1-D3 acceptance (0.5.0)". Row 13 (theme first-frame flash) recorded as not observed. Observations: a wallet with pending backup cannot reach Settings (so cannot be deleted in-app until backed up); `uiautomator dump` exposes seed words as `content-desc`; a disabled Flutter button still reports `enabled=true` to uiautomator.
 
-**PR #8:** https://github.com/JohnnyLawDGB/digibyte-wallet/pull/8
+**PR #8 MERGED** (merge commit 72262b5), all four checks green: https://github.com/JohnnyLawDGB/digibyte-wallet/pull/8
 
 **Next:** fiat currency and log export are each their own lane (split out of M1-D3 by ruling). M1-A is still parked on the owner's offline fee key. DigiDollar — a protocol-level asset in digibyted — must eventually be supported as a swap peg; it needs KDF fork work, so scope it as a milestone, not a ticket.

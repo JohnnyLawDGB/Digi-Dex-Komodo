@@ -450,16 +450,15 @@ A small solo lane for the three items M1-D2 acceptance carried over. Ledger, wit
   cipig DGB server. BTC and LTC still cipig.
 - Backstop: prompt shown → app gave up at **119.7 s** (0.4.0: 30 s). A fingerprint touch still
   authenticates and reaches Home.
-- **Gap:** a touch *between* 30 s and 120 s was never witnessed in a single run — run 1 drew no
-  touch, run 2's landed at +6.2 s because the Moto's sensor is its power button. It follows from
-  the two observations, but it is an inference, recorded as row 4c.
+- A touch at **+40.8 s** authenticated and reached Home (run 3, phone flat on the table) — the
+  exact case 0.4.0 discarded at 30 s. It took three runs: run 1 drew no touch, and run 2's landed
+  at +6.2 s because the Moto's sensor is its power button.
 
 **New 0.4.2 / later list**
 - A six-digit USD value wraps mid-number in the Home row at font scale 2.0 (cosmetic, top font
   step only).
 - The orphaned prompt after the backstop (carried; flutter_secure_storage cannot cancel it).
 - `Confirming n/7` does not advance live on an open asset screen (carried).
-- Catch a late touch between the grace and the backstop in a future run, phone flat.
 
 **Phone:** font_scale 1.15, screen_off_timeout 60000, biometrics ON for legacy3, signed in on Home.
 

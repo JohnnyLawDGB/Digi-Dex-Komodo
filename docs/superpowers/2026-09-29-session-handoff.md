@@ -408,3 +408,59 @@ Details in spec §10.
   3. DGB electrum order: put `electrum.digiscope.me:50002` first (spec §7.2); the shipped config has cipig first, so KDF used cipig.
 - Owner-question rulings (unit price at 6 significant digits; polling while `inactive`) are in the ledger.
 - After that: M1-D3 (settings, log export). M1-A is still parked on the owner's offline fee key.
+
+## Update 2026-10-10: 0.4.1 shipped (PR #7)
+
+A small solo lane for the three items M1-D2 acceptance carried over. Ledger, with every ruling:
+`.superpowers/sdd/2026-10-10-v041-followups/progress.md`.
+
+**What shipped**
+- **Large-font Home row.** The balance and USD block moved out of `ListTile.trailing`, which is
+  given its intrinsic width, into the title beside the name (`Expanded` 3 : 2); only the Send
+  button is trailing, and the USD value with its 24 h change became a `Wrap`. The RED test
+  reproduced the real defect: an overflow of 91 px right and 8 px bottom at textScale 2.0. Two
+  widget tests now cover 320 px and the Moto's 393 px.
+- **Biometric backstop 30 s → 2 min** (`DeviceBiometricStore.promptTimeout`). Three store-test
+  assertions were flipped first and failed with `Expected 0:02:00, Actual 0:00:30`.
+- **DGB electrum order.** The cause was *not* the config: `electrums/DGB` has had
+  `electrum.digiscope.me` first since coins `a7bce7ea`, but the generator sorts every list
+  alphabetically, so `dgb.electrum1.cipig.net` always won. Fixed in the coins fork,
+  `utils/electrum_order.py` (own module, own tests, so the delta against upstream is one import
+  and one call).
+
+**Repos**
+- coins `d3db44ac` on `JohnnyLawDGB/coins digibyte/main`. The DGB and DGB-segwit lists were
+  reordered surgically, **not** regenerated: `utils/electrum_scan_report.json` is 11 days old and
+  a `no-scan` run drops servers across unrelated coins as stale. Verified as the same servers
+  with nothing else in any config changed.
+- SDK fork `57aaf3c7` on `digibyte/main`, pinning that commit. Submodule pointer bumped.
+- app `fix/0.4.1-font-backstop-electrum`: `a04f736` (fixes), `a46a47c` (version 0.4.1+7),
+  `1df763c` (acceptance). 900 tests, analyze clean.
+
+**Release**
+- 0.4.1, versionCode 406797, uploaded by the service account to Play internal (completed) and
+  installed on the Moto from Play. AAB:
+  `~/digibyte-dex/release-artifacts/digibyte-dex-0.4.1-406797.aab`. Signer matches, 16 KB PASS,
+  native library set identical to 0.4.0.
+
+**Acceptance (all PASS, one gap)** — table in the app repo, `docs/release.md` → "0.4.1 acceptance".
+- Font scale 2.0: `DGB` / `DigiByte` each keep their line and nothing overlaps. 0.4.0 showed one
+  letter per line.
+- DGB connects to `134.199.198.90:50002` for 90 s after sign-in, with zero connections to either
+  cipig DGB server. BTC and LTC still cipig.
+- Backstop: prompt shown → app gave up at **119.7 s** (0.4.0: 30 s). A fingerprint touch still
+  authenticates and reaches Home.
+- **Gap:** a touch *between* 30 s and 120 s was never witnessed in a single run — run 1 drew no
+  touch, run 2's landed at +6.2 s because the Moto's sensor is its power button. It follows from
+  the two observations, but it is an inference, recorded as row 4c.
+
+**New 0.4.2 / later list**
+- A six-digit USD value wraps mid-number in the Home row at font scale 2.0 (cosmetic, top font
+  step only).
+- The orphaned prompt after the backstop (carried; flutter_secure_storage cannot cancel it).
+- `Confirming n/7` does not advance live on an open asset screen (carried).
+- Catch a late touch between the grace and the backstop in a future run, phone flat.
+
+**Phone:** font_scale 1.15, screen_off_timeout 60000, biometrics ON for legacy3, signed in on Home.
+
+**Next: M1-D3** (settings, log export). M1-A is still parked on the owner's offline fee key.

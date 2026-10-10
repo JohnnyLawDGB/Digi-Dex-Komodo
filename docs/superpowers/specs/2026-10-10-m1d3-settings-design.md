@@ -1,7 +1,7 @@
 # M1-D3 "Settings": design spec
 
 - **Date:** 2026-10-10
-- **Status:** design approved by the owner in conversation 2026-10-10; written spec awaiting review.
+- **Status:** approved by the owner 2026-10-10 (design in conversation, written spec reviewed).
 - **Parent spec:** `2026-09-27-digibyte-wallet-design.md`, §5.1 (Settings).
 - **Previous milestone:** `2026-10-08-m1d2-prices-usd-design.md`. M1-D2 merged as PR #6; 0.4.1 followed as PR #7, and is on Play internal.
 - **Repo:** app `JohnnyLawDGB/digibyte-wallet`, branch `feat/m1d3-settings`. **No SDK fork change is expected** — see §7.

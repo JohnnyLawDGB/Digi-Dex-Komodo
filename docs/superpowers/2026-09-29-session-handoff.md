@@ -472,3 +472,29 @@ offline fee key.
 **New standing requirement (owner, 2026-10-10):** DigiDollar, an asset on the DigiByte blockchain,
 must eventually be supported as a swap peg (`digibyte.io/digidollar`). Not scoped; it belongs to the
 DEX side of the roadmap.
+
+## Update 2026-10-10: M1-D3 (Settings) implemented and accepted; PR #8
+
+**Spec / plan:** `specs/2026-10-10-m1d3-settings-design.md`, `plans/2026-10-10-m1d3-settings.md` (10 tasks, Task 6 split into 6a/6b by ruling). Ledger with every ruling: `.superpowers/sdd/2026-10-10-m1d3-settings/progress.md`.
+
+**Code:** branch `feat/m1d3-settings`, 24 commits off main 24ad3e4. 1036 tests, analyze clean. **No SDK fork change** — `sdk.walletDeletion` and `disable_coin` already existed.
+
+**Shipped:** Settings screen (Security / Appearance / Assets / About / danger zone) — theme (app-wide), auto-lock (per wallet, Immediately/1/2/5/15, no "Never"), assets on/off with real KDF deactivation and a funded-coin refusal, view seed behind the shared gate, biometric toggle, delete wallet with SDK review + typed name.
+
+**Two pre-existing defects fixed in-lane:**
+- `DeviceBiometricStore.disable` could strand a stored password (marker deleted first, failure swallowed). Now deletes the password first, rethrows transient errors keeping the marker, and wraps the call so "Use password" cannot hang it.
+- The delete screen stayed armed after a non-deletion — signed out, unlocked, typed name intact, with auto-lock unable to engage. One tap by anyone holding the phone. Now disarms.
+
+**What the review process caught (worth remembering):**
+- A **cross-task seam** only the whole-branch review could see: delete-wallet called `disable` unconditionally, so deleting a wallet that never used biometrics raised a Keystore prompt *after* the wallet was gone, and a "Use password" tap froze the screen for 2 min.
+- An **`authRedirect` exception that was dead code** — the screen was reached by `push`, so `matchedLocation` never matched. A careful opus review had analysed it in depth and been correct about code that never ran. Only the required integration test found it.
+- **Several inert assertions**, one proved inert by restoring the old broken implementation and watching the suite stay green. A fixture used 6-char words where BIP39 reaches 8.
+- A **seed leak**: an Equatable state printed seed words via `toString` (the repo already had the `stringify => false` precedent).
+
+**Release:** 0.5.0, versionCode 407145, Play internal (completed). AAB `~/digibyte-dex/release-artifacts/digibyte-dex-0.5.0-407145.aab`; signer ok, 16 KB PASS, native libs identical to 0.4.1.
+
+**Acceptance: 13 pass, 0 fail, 1 not observed.** Table in the app repo `docs/release.md` → "M1-D3 acceptance (0.5.0)". Row 13 (theme first-frame flash) recorded as not observed. Observations: a wallet with pending backup cannot reach Settings (so cannot be deleted in-app until backed up); `uiautomator dump` exposes seed words as `content-desc`; a disabled Flutter button still reports `enabled=true` to uiautomator.
+
+**PR #8:** https://github.com/JohnnyLawDGB/digibyte-wallet/pull/8
+
+**Next:** fiat currency and log export are each their own lane (split out of M1-D3 by ruling). M1-A is still parked on the owner's offline fee key. DigiDollar — a protocol-level asset in digibyted — must eventually be supported as a swap peg; it needs KDF fork work, so scope it as a milestone, not a ticket.

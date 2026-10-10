@@ -392,7 +392,7 @@ Details in spec §10.
   - The `cg.py` Chrome-step quoting (scratch only).
 - After M1-D2: M1-D3 (settings, log export). M1-A is still parked on the owner's offline fee key.
 
-## Update 2026-10-10: M1-D2 acceptance done, PR #6
+## Update 2026-10-10: M1-D2 DONE (PR #6 merged)
 
 - **Acceptance (Task 10) is complete.** The table is in the app repo, `docs/release.md` → "M1-D2 acceptance (0.4.0)", commit 0a849b5. The ledger, with every ruling, is `.superpowers/sdd/2026-10-08-m1d2-prices-usd/progress.md`.
   - **R3-2 is proven on the device.** On the first read after a cold start, the app answered 1.0 s after "Use password" closed the prompt (0.3.1: 30 s). The agent tapped the button via adb, with the owner's go: two owner taps had landed after the 30 s backstop because of chat delay.
@@ -400,7 +400,7 @@ Details in spec §10.
   - S3-2 PASS after a cold start and after sign-out. Network PASS: only CoinGecko, seed1:15847 and the cipig electrums; no Binance, CoinPaprika or Gleec; logcat scans clean.
   - 13a (the Lock-page opt-in with "Use password") was not observed; the read path covers the same grace.
   - **Large font FAIL (known minor):** at font scale 2.0 the Home row title is squeezed to one letter per line. 0.4.0 was left as it was; the fix goes to 0.4.1.
-- **PR #6:** https://github.com/JohnnyLawDGB/digibyte-wallet/pull/6 (branch `feat/m1d2-prices-usd`, pushed).
+- **PR #6 MERGED** (merge commit 04b4af2): https://github.com/JohnnyLawDGB/digibyte-wallet/pull/6.
 - **Phone:** legacy3 has fingerprint ON (recorded in SECRETS-INDEX.md); screen timeout 60000; font_scale 1.15; airplane off.
 - **Next: 0.4.1** (small; can be bundled into M1-D3):
   1. Home row at large font: move the balance/USD block out of `ListTile.trailing`; add a 320 px × textScale 2.0 widget test.

@@ -462,4 +462,13 @@ A small solo lane for the three items M1-D2 acceptance carried over. Ledger, wit
 
 **Phone:** font_scale 1.15, screen_off_timeout 60000, biometrics ON for legacy3, signed in on Home.
 
-**Next: M1-D3** (settings, log export). M1-A is still parked on the owner's offline fee key.
+**PR #7 MERGED** (merge commit 24ad3e4), all four checks green:
+https://github.com/JohnnyLawDGB/digibyte-wallet/pull/7
+
+**Next: M1-D3** (settings) — spec at `specs/2026-10-10-m1d3-settings-design.md`, scope split so that
+fiat currency and log export become their own later lanes. M1-A is still parked on the owner's
+offline fee key.
+
+**New standing requirement (owner, 2026-10-10):** DigiDollar, an asset on the DigiByte blockchain,
+must eventually be supported as a swap peg (`digibyte.io/digidollar`). Not scoped; it belongs to the
+DEX side of the roadmap.

@@ -4,7 +4,7 @@
 narrative is in `2026-09-29-session-handoff.md`, and the authoritative plan of record is
 §10 of `specs/2026-09-27-digibyte-wallet-design.md`.
 
-Last updated: 2026-10-10, after M1-D3 merged (PR #8).
+Last updated: 2026-10-11, after an iOS/Apple readiness audit (M1-D3 merged as PR #8 on 2026-10-10).
 
 ## Where we are
 
@@ -28,7 +28,7 @@ Last updated: 2026-10-10, after M1-D3 merged (PR #8).
 | **M1-D3 — Settings** | **Done, PR #8** (merge 72262b5), accepted on device 13/14 | **0.5.0** |
 | M1-D4 — Fiat currency | **Next candidate.** Not scoped | — |
 | M1-D5 — Log export | **Next candidate.** Not scoped | — |
-| M1 exit — iOS pass on the Mac, TestFlight | Pending the owner's Mac | — |
+| **M1-E — iOS pass, TestFlight** | **Not scoped.** Audited 2026-10-11; see "iOS / Apple readiness" | — |
 
 **M1 exit criterion:** internal TestFlight and Play builds, usable on mainnet as a wallet.
 Play internal is live; TestFlight and the iOS device pass are outstanding.
@@ -48,6 +48,64 @@ printing them through `toString`.
 
 *Recommendation: log export first*, because it decides what can safely be collected from
 testers. Fiat is the more visible product gap, so this is a judgement call, not an obvious one.
+
+## iOS / Apple readiness — audited 2026-10-11
+
+Everything shipped so far is Android-only in practice: Play internal has 0.1.0 through 0.5.0,
+and **no build has ever run on a Mac**. CI compiles iOS on every PR (`build-ios`, ~3m44s), so
+the code builds — but no pods are installed locally, no device has run it, and nothing has been
+through App Review. The M1 exit criterion includes TestFlight, so this is the gap between where
+we are and where M1 ends.
+
+**In good shape already:** `PrivacyInfo.xcprivacy` exists with `NSPrivacyTracking` and two
+required-reason API declarations; `NSFaceIDUsageDescription` and `NSCameraUsageDescription` are
+present; `SceneDelegate.swift` means the modern UIScene lifecycle rather than the legacy
+AppDelegate-only path; `CFBundleURLSchemes` carries the `digibyte:` scheme; and the Keychain
+already uses `first_unlock_this_device`.
+
+### Gaps, worst first
+
+1. **No screenshot or recording protection on iOS at all.** `setSecureWindow` invokes a
+   `setSecure` method channel that only `MainActivity.kt` implements; on iOS the
+   `MissingPluginException` is swallowed by design (design note 11). So the seed reveal, the
+   onboarding backup page and the delete screen are fully capturable on iOS — screenshots and
+   screen recording both. This is precisely the protection we spent a fix round hardening on
+   Android, where it now blacks out from the first frame. iOS has no `FLAG_SECURE` equivalent;
+   it needs a deliberate implementation.
+2. **The app-switcher snapshot is unprotected.** iOS captures the window when the app
+   backgrounds. Without covering the window on resign-active, a seed screen or balances land in
+   that snapshot. Android gets this free with `FLAG_SECURE`; iOS does not.
+3. **Exchange rules are a milestone risk, not a detail.** M1 is a wallet, which Apple permits
+   when the developer is enrolled as an **organization**. M2 adds swap functionality, and
+   Apple's guideline 3.1.5 has historically required appropriate licensing and permissions per
+   region for exchange features, with rejections citing the exchange itself as the expected
+   submitter. **Confirm the Apple Developer account is an organization, and get a reading on the
+   exchange rule, before M2's UI is built** — not after.
+4. **`ITSAppUsesNonExemptEncryption` is absent**, so every upload prompts for export compliance,
+   and a wallet needs a deliberate, defensible answer rather than a click-through.
+5. **Deployment target is iOS 13.0** — very old for 2026, and it costs access to modern APIs
+   (including the cleaner routes to items 1 and 2). Worth raising deliberately.
+6. **The privacy manifest is thin.** It declares only `UserDefaults` and `FileTimestamp`
+   required-reason categories and *no* collected data types. That needs auditing against what
+   the plugins actually call (`local_auth`, `mobile_scanner`, `package_info_plus`, `share_plus`,
+   `url_launcher`, `flutter_secure_storage`), and against Apple's rule that commonly-used
+   third-party SDKs ship their own manifest and signature.
+   **A question that is ours specifically:** we operate `electrum.digiscope.me`, so the app's
+   primary DGB server is first-party infrastructure that observes user addresses and IP
+   addresses. Whether that counts as developer data collection for privacy labels is a real
+   question, not a formality.
+7. **Build-toolchain deadline.** Secondary sources indicate uploads require Xcode 26 / SDK 26
+   from April 2026. Not confirmed against Apple's own pages — **verify before the Mac session**,
+   because it gates whether anything can be uploaded at all.
+8. **`digibyte:` is a custom scheme.** Correct for the payment-URI standard, but Universal Links
+   are the modern complement for any https entry points.
+9. **Cold-start link delivery on iOS** is still unverified (carried from M1-D1).
+
+### Suggested shape
+
+A dedicated **M1-E: iOS pass** lane, specced like any other, rather than a grab-bag during the
+first Mac session. Items 1, 2 and 4 are code and belong in that lane. Items 3 and 7 are
+questions to answer *first*, because they can change what is worth building.
 
 ## Carried debt, none blocking
 

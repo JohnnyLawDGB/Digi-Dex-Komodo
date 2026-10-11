@@ -4,7 +4,7 @@
 narrative is in `2026-09-29-session-handoff.md`, and the authoritative plan of record is
 §10 of `specs/2026-09-27-digibyte-wallet-design.md`.
 
-Last updated: 2026-10-11, after an iOS/Apple readiness audit (M1-D3 merged as PR #8 on 2026-10-10).
+Last updated: 2026-10-11, after a store-readiness audit of **both** platforms (M1-D3 merged as PR #8 on 2026-10-10).
 
 ## Where we are
 
@@ -28,7 +28,7 @@ Last updated: 2026-10-11, after an iOS/Apple readiness audit (M1-D3 merged as PR
 | **M1-D3 — Settings** | **Done, PR #8** (merge 72262b5), accepted on device 13/14 | **0.5.0** |
 | M1-D4 — Fiat currency | **Next candidate.** Not scoped | — |
 | M1-D5 — Log export | **Next candidate.** Not scoped | — |
-| **M1-E — iOS pass, TestFlight** | **Not scoped.** Audited 2026-10-11; see "iOS / Apple readiness" | — |
+| **M1-E — iOS pass, TestFlight** | **Not scoped.** Audited 2026-10-11; Mac environment ready | — |
 
 **M1 exit criterion:** internal TestFlight and Play builds, usable on mainnet as a wallet.
 Play internal is live; TestFlight and the iOS device pass are outstanding.
@@ -106,6 +106,67 @@ already uses `first_unlock_this_device`.
 A dedicated **M1-E: iOS pass** lane, specced like any other, rather than a grab-bag during the
 first Mac session. Items 1, 2 and 4 are code and belong in that lane. Items 3 and 7 are
 questions to answer *first*, because they can change what is worth building.
+
+## Android / Play readiness — audited 2026-10-11
+
+Android is where the users are: 0.1.0 through 0.5.0 are on Play internal testing and the Moto
+runs every acceptance pass. The security posture is **good**, better than the iOS side.
+
+**Already right, and worth not regressing:** `allowBackup=false` and `fullBackupContent=false`
+with a `data_extraction_rules.xml` — the classic wallet leak, where a seed or keystore rides a
+cloud backup off the device, is closed. `usesCleartextTraffic=false`. Only four permissions
+(INTERNET, CAMERA, USE_BIOMETRIC, USE_FINGERPRINT). minSdk 28, targetSdk and compileSdk 36, so
+current against Play's floor. 16 KB page alignment is verified on every release build, and the
+release script refuses a bundle not signed by the upload key.
+
+### Gaps, worst first
+
+1. **R8 is off.** `isMinifyEnabled` is never set, so release builds are not shrunk and the
+   Kotlin/Java layer is not obfuscated — class and method names ship intact. Dart is AOT
+   compiled so the Dart logic is not readable, but `--obfuscate --split-debug-info` is not used
+   either, so Dart symbol names remain. Obfuscation is not a primary control, but for a wallet
+   it is expected practice and it raises the cost of attack. Enabling R8 under Flutter needs
+   keep rules for the plugins, so this is a small lane, not a flag flip.
+2. **No native debug symbols uploaded.** `debugSymbolLevel` is unset, so Play Console crash
+   reports for `libkomodo_defi_framework.so` arrive unsymbolicated. For a wallet whose hardest
+   failures live in the KDF native layer, that is an operational blind spot — and it is close to
+   free to fix.
+3. **`flutter build appbundle` alone can produce a debug-signed "release".** The release config
+   falls back to debug signing when `key.properties` is absent, deliberately, so contributors
+   can run release builds. `tool/release_android.sh` refuses to ship one — but only that path is
+   guarded.
+4. **`USE_FINGERPRINT` is deprecated** and redundant at minSdk 28, where `USE_BIOMETRIC` covers
+   it. Cosmetic, but it is a permission on the store listing.
+5. **No network security config.** Largely moot since cleartext is off — and worth understanding
+   why it would not help anyway: **KDF opens its electrum connections through its own Rust TLS
+   stack, so Android's network security config does not govern them.** Certificate pinning for
+   `electrum.digiscope.me` would have to happen inside KDF, not in the Android layer.
+6. **`taskAffinity` was deliberately removed** (StrandHogg). Largely mitigated at minSdk 28 since
+   StrandHogg 2.0 targets below Android 9, but it is a standing decision rather than a fix.
+
+## Both stores — policy, which is an M2 problem
+
+The two platforms converge on the same distinction, and it is the one that matters for this
+project: **a wallet is treated differently from an exchange.**
+
+- **Google Play** requires a **Financial Features Declaration** under App Content, stating
+  whether the app is a cryptocurrency exchange and/or a software wallet, with per-country
+  licensing requirements behind it. After 2025 backlash Google stated that **non-custodial
+  wallets are not in scope** of the Cryptocurrency Exchanges and Software Wallets policy — which
+  is the good case for us, since the user holds the seed. Swap functionality is where that stops
+  being obviously true.
+- **Apple** guideline 3.1.5 permits wallets from organization-enrolled developers, and has
+  historically wanted licensing and permissions per region for exchange features.
+
+So M2 carries a **store-policy question on both platforms simultaneously**, not a technical one.
+Settle it before the swap UI exists. Both readings above come from secondary sources and Google's
+help pages rather than a definitive reading of current policy text — **verify against the primary
+policy pages before acting**, and before any production (rather than internal) release.
+
+**A question that is ours on both stores:** the data-safety form and the privacy labels both ask
+what the developer collects. We operate `electrum.digiscope.me`, so the app's primary DGB server
+is first-party infrastructure that sees user addresses and IP addresses. That needs a deliberate,
+consistent answer in both forms, not a default.
 
 ## Carried debt, none blocking
 
